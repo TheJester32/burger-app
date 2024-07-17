@@ -15,11 +15,13 @@ code {
 main{
   display: flex;
   justify-content: center;
+  margin-top: 100px;
 }
 
 .main__inner_content{
   width: 100%;
-  max-width: 1200px;
+  max-width: 1220px;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
+  gap: 4rem;
 }
