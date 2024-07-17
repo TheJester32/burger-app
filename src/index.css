@@ -15,13 +15,22 @@ code {
 main{
   display: flex;
   justify-content: center;
+<<<<<<< HEAD
   margin-top: 100px;
+=======
+>>>>>>> 3b961f7c143fc2a6fa308fc525392e2960cd3fe2
 }
 
 .main__inner_content{
   width: 100%;
+<<<<<<< HEAD
   max-width: 1220px;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 4rem;
+=======
+  max-width: 1200px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+>>>>>>> 3b961f7c143fc2a6fa308fc525392e2960cd3fe2
 }
