@@ -12,7 +12,7 @@ function App() {
       <main>
         <div className='main__inner_content'>
           <BurgerConstructor data={data} />
-          <BurgerIngredients />
+          <BurgerIngredients data={data}/>
         </div>
       </main>
     </>

@@ -24,12 +24,13 @@
 }
 
 .constructor__elements_container {
-    height: calc(100vh - 20rem);
+    height: calc(90vh - 20rem);
     overflow-y: auto;
     scrollbar-width: thin;
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
     margin-top: 4rem;
+    padding-left: 0;
 }
 
 .constructor__elements_wrapper {
@@ -37,9 +38,14 @@
     grid-template-columns: repeat(2, 1fr);
 }
 
+.constructor__elements_wrapper li {
+    list-style-type: none;
+}
+
 .constructor__element_wrap {
     text-align: center;
     margin-bottom: 2rem;
+    list-style-type: none;
 }
 
 .constructor__element_price_wrapper{

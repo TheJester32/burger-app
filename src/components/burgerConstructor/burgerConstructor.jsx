@@ -15,47 +15,47 @@ function BurgerConstructor({ data }) {
         <h3 className={`text text_type_main-default p-4 ${burgerConstructorStyles.unfocused_option}`}>Соусы</h3>
         <h3 className={`text text_type_main-default p-4 ${burgerConstructorStyles.unfocused_option}`}>Начинки</h3>
       </div>
-      <div className={`custom-scroll ${burgerConstructorStyles.constructor__elements_container}`}>
-      <h2 className="text text_type_main-medium">Булки</h2>
-      <div className={burgerConstructorStyles.constructor__elements_wrapper}> 
-        {buns.map(bun => (
-          <div key={bun._id} className={`p-3 ${burgerConstructorStyles.constructor__element_wrap}`}>
-            <img src={bun.image} alt={bun.name}/>
-            <div className={burgerConstructorStyles.constructor__element_price_wrapper}>
-            <p className={`text text_type_digits-default ${burgerConstructorStyles.constructor__element_price}`}>{bun.price}</p>
+      <ul className={`custom-scroll ${burgerConstructorStyles.constructor__elements_container}`}>
+        <li className="text text_type_main-medium">Булки</li>
+        <div className={burgerConstructorStyles.constructor__elements_wrapper}> 
+          {buns.map(bun => (
+            <li key={bun._id} className={`p-3 ${burgerConstructorStyles.constructor__element_wrap}`}>
+              <img src={bun.image} alt={bun.name}/>
+              <div className={burgerConstructorStyles.constructor__element_price_wrapper}>
+                <p className={`text text_type_digits-default ${burgerConstructorStyles.constructor__element_price}`}>{bun.price}</p>
                 <CurrencyIcon />
-            </div>
-            <p className="text text_type_main-default p-1">{bun.name}</p>
-          </div>
-        ))}
-      </div>
-      <h2 className="text text_type_main-medium">Соусы</h2>
-      <div className={burgerConstructorStyles.constructor__elements_wrapper}>
-        {sauces.map(sauce => (
-          <div key={sauce._id} className={`p-3 ${burgerConstructorStyles.constructor__element_wrap}`}>
-            <img src={sauce.image} alt={sauce.name} />
-            <div className={burgerConstructorStyles.constructor__element_price_wrapper}>
-            <p className={`text text_type_digits-default ${burgerConstructorStyles.constructor__element_price}`}>{sauce.price}</p>
+              </div>
+              <p className="text text_type_main-default p-1">{bun.name}</p>
+            </li>
+          ))}
+        </div>
+        <li className="text text_type_main-medium">Соусы</li>
+        <div className={burgerConstructorStyles.constructor__elements_wrapper}>
+          {sauces.map(sauce => (
+            <li key={sauce._id} className={`p-3 ${burgerConstructorStyles.constructor__element_wrap}`}>
+              <img src={sauce.image} alt={sauce.name} />
+              <div className={burgerConstructorStyles.constructor__element_price_wrapper}>
+                <p className={`text text_type_digits-default ${burgerConstructorStyles.constructor__element_price}`}>{sauce.price}</p>
                 <CurrencyIcon />
-            </div>
-            <p className="text text_type_main-default p-1">{sauce.name}</p>
-          </div>
-        ))}
-      </div>
-      <h2 className="text text_type_main-medium">Начинки</h2>
-      <div className={burgerConstructorStyles.constructor__elements_wrapper}>
-        {mains.map(main => (
-          <div key={main._id} className={`p-3 ${burgerConstructorStyles.constructor__element_wrap}`}>
-            <img src={main.image} alt={main.name} />
-            <div className={burgerConstructorStyles.constructor__element_price_wrapper}>
-            <p className={`text text_type_digits-default ${burgerConstructorStyles.constructor__element_price}`}>{main.price}</p>
+              </div>
+              <p className="text text_type_main-default p-1">{sauce.name}</p>
+            </li>
+          ))}
+        </div>
+        <li className="text text_type_main-medium">Начинки</li>
+        <div className={burgerConstructorStyles.constructor__elements_wrapper}>
+          {mains.map(main => (
+            <li key={main._id} className={`p-3 ${burgerConstructorStyles.constructor__element_wrap}`}>
+              <img src={main.image} alt={main.name} />
+              <div className={burgerConstructorStyles.constructor__element_price_wrapper}>
+                <p className={`text text_type_digits-default ${burgerConstructorStyles.constructor__element_price}`}>{main.price}</p>
                 <CurrencyIcon />
-            </div>
-            <p className="text text_type_main-default p-1">{main.name}</p>
-          </div>
-        ))}
-      </div>
-      </div>
+              </div>
+              <p className="text text_type_main-default p-1">{main.name}</p>
+            </li>
+          ))}
+        </div>
+      </ul>
     </section>
   );
 }

@@ -1,11 +1,89 @@
 import React from 'react';
-import { } from '@ya.praktikum/react-developer-burger-ui-components';
+import { CurrencyIcon, LockIcon, DragIcon, DeleteIcon, Button } from '@ya.praktikum/react-developer-burger-ui-components';
 import burgeringredientsStyles from './burgerIngredients.module.css';
 
-function BurgerIngredients() {
+function BurgerIngredients({ data }) {
+    const bun = data.filter(item => item.type === 'bun' && item._id === '60666c42cc7b410027a1a9b1')[0];
+    const mains = data.filter(item => item.type === 'main');
+    const sauces = data.filter(item => item.type === 'sauce');
+
     return (
-        <section>
-            <h1>Соберите бургер 2</h1>
+        <section className={burgeringredientsStyles.ingredients}>
+            <ul className={burgeringredientsStyles.ingredients__default_list}>
+                <li key={bun._id} className={`p-2`}>
+                    <div className={burgeringredientsStyles.ingredients__main_list_inner_wrapper}>
+                        <DragIcon />
+                        <img src={bun.image_mobile} alt={bun.name} />
+                        <p className={`text text_type_main-default ${burgeringredientsStyles.ingredients__name}`}>{`${bun.name} (верх)`}</p>
+                    </div>
+                    <div className={burgeringredientsStyles.ingredients__main_list_inner__secondary_wrapper}>
+                        <div className={burgeringredientsStyles.ingredients__main_list_price_wrapper}>
+                            <p className={`text text_type_digits-default ${burgeringredientsStyles.ingredients__main_list_price}`}>{bun.price}</p>
+                            <CurrencyIcon />
+                        </div>
+                        <LockIcon type="secondary" />
+                    </div>
+                </li>
+            </ul>
+            <ul className={burgeringredientsStyles.ingredients__main_list}>
+                {sauces.map(sauce => (
+                    <li key={sauce._id} className={`p-2`}>
+                        <div className={burgeringredientsStyles.ingredients__main_list_inner_wrapper}>
+                            <DragIcon />
+                            <img src={sauce.image_mobile} alt={sauce.name} />
+                            <p className={`text text_type_main-default ${burgeringredientsStyles.ingredients__name}`}>{sauce.name}</p>
+                        </div>
+                        <div className={burgeringredientsStyles.ingredients__main_list_inner__secondary_wrapper}>
+                            <div className={burgeringredientsStyles.ingredients__main_list_price_wrapper}>
+                                <p className={`text text_type_digits-default ${burgeringredientsStyles.ingredients__main_list_price}`}>{sauce.price}</p>
+                                <CurrencyIcon />
+                            </div>
+                            <DeleteIcon />
+                        </div>
+                    </li>
+                ))}
+                {mains.map(main => (
+                    <li key={main._id} className={`p-2`}>
+                        <div className={burgeringredientsStyles.ingredients__main_list_inner_wrapper}>
+                            <DragIcon />
+                            <img src={main.image_mobile} alt={main.name} />
+                            <p className={`text text_type_main-default ${burgeringredientsStyles.ingredients__name}`}>{main.name}</p>
+                        </div>
+                        <div className={burgeringredientsStyles.ingredients__main_list_inner__secondary_wrapper}>
+                            <div className={burgeringredientsStyles.ingredients__main_list_price_wrapper}>
+                                <p className={`text text_type_digits-default ${burgeringredientsStyles.ingredients__main_list_price}`}>{main.price}</p>
+                                <CurrencyIcon className={burgeringredientsStyles.ingredients__currency} />
+                            </div>
+                            <DeleteIcon />
+                        </div>
+                    </li>
+                ))}
+            </ul>
+            <ul className={burgeringredientsStyles.ingredients__default_list}>
+                <li key={bun._id} className={`p-2`}>
+                    <div className={burgeringredientsStyles.ingredients__main_list_inner_wrapper}>
+                        <DragIcon />
+                        <img src={bun.image_mobile} alt={bun.name} />
+                        <p className={`text text_type_main-default ${burgeringredientsStyles.ingredients__name}`}>{`${bun.name} (низ)`}</p>
+                    </div>
+                    <div className={burgeringredientsStyles.ingredients__main_list_inner__secondary_wrapper}>
+                        <div className={burgeringredientsStyles.ingredients__main_list_price_wrapper}>
+                            <p className={`text text_type_digits-default ${burgeringredientsStyles.ingredients__main_list_price}`}>{bun.price}</p>
+                            <CurrencyIcon />
+                        </div>
+                        <LockIcon type="secondary" />
+                    </div>
+                </li>
+            </ul>
+                <div className={burgeringredientsStyles.ingredients__final_price_container}>
+                    <div className={burgeringredientsStyles.ingredients__final_price_wrapper}>
+                    <h2 className={`text text_type_digits-medium ${burgeringredientsStyles.ingredients__final_price_digit}`}>610</h2>
+                    <CurrencyIcon />
+                </div>
+                <Button htmlType="button" type="primary" size="large">
+                    Оформить заказ
+                </Button>
+            </div>
         </section>
     );
 }
