@@ -1,11 +1,22 @@
 import React from 'react';
-import { CurrencyIcon } from '@ya.praktikum/react-developer-burger-ui-components';
+import PropTypes from 'prop-types';
+import { CurrencyIcon, Counter } from '@ya.praktikum/react-developer-burger-ui-components';
 import burgerConstructorStyles from './burgerConstructor.module.css';
 
 function BurgerConstructor({ data }) {
   const buns = data.filter(item => item.type === 'bun');
   const sauces = data.filter(item => item.type === 'sauce');
   const mains = data.filter(item => item.type === 'main');
+
+  BurgerConstructor.propTypes = {
+    data: PropTypes.arrayOf(PropTypes.shape({
+      _id: PropTypes.string.isRequired,
+      type: PropTypes.oneOf(['bun', 'sauce', 'main']).isRequired,
+      name: PropTypes.string.isRequired,
+      image: PropTypes.string.isRequired,
+      price: PropTypes.number.isRequired,
+    })).isRequired,
+  };
 
   return (
     <section>
@@ -17,10 +28,11 @@ function BurgerConstructor({ data }) {
       </div>
       <ul className={`custom-scroll ${burgerConstructorStyles.constructor__elements_container}`}>
         <li className="text text_type_main-medium">Булки</li>
-        <div className={burgerConstructorStyles.constructor__elements_wrapper}> 
+        <div className={burgerConstructorStyles.constructor__elements_wrapper}>
           {buns.map(bun => (
             <li key={bun._id} className={`p-3 ${burgerConstructorStyles.constructor__element_wrap}`}>
-              <img src={bun.image} alt={bun.name}/>
+              <Counter count={0} size="default" extraClass="m-1" />
+              <img src={bun.image} alt={bun.name} />
               <div className={burgerConstructorStyles.constructor__element_price_wrapper}>
                 <p className={`text text_type_digits-default ${burgerConstructorStyles.constructor__element_price}`}>{bun.price}</p>
                 <CurrencyIcon />
@@ -33,6 +45,7 @@ function BurgerConstructor({ data }) {
         <div className={burgerConstructorStyles.constructor__elements_wrapper}>
           {sauces.map(sauce => (
             <li key={sauce._id} className={`p-3 ${burgerConstructorStyles.constructor__element_wrap}`}>
+              <Counter count={0} size="default" extraClass="m-1" />
               <img src={sauce.image} alt={sauce.name} />
               <div className={burgerConstructorStyles.constructor__element_price_wrapper}>
                 <p className={`text text_type_digits-default ${burgerConstructorStyles.constructor__element_price}`}>{sauce.price}</p>

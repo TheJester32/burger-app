@@ -5,7 +5,7 @@ import headerStyles from './header.module.css';
 function Header() {
     return (
         <header className={headerStyles.header}>
-            <div className={headerStyles.header__container}>
+            <nav className={headerStyles.header__navigation}>
                 <div className={headerStyles.header__double_elements}>
                     <div className={`p-2 ${headerStyles.header__pair_elements}`}>
                         <BurgerIcon type="primary" />
@@ -29,7 +29,7 @@ function Header() {
                         Личный кабинет
                     </p>
                 </div>
-            </div>
+            </nav>
         </header>
     );
 }

@@ -12,17 +12,25 @@ code {
     monospace;
 }
 
-main{
+main {
   display: flex;
   justify-content: center;
-
   margin-top: 100px;
+  margin-bottom: 2rem;
 }
 
 .main__inner_content{
-  width: 100%;
-  max-width: 1220px;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+@media (min-width: 1250px) {
+  .main__inner_content {
+    width: 100%;
+    max-width: 1220px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 3rem;
+  }
 }
