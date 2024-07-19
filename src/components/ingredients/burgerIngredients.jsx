@@ -8,9 +8,7 @@ function BurgerIngredients({ data }) {
     const mains = data.filter(item => item.type === 'main');
     const sauces = data.filter(item => item.type === 'sauce');
 
-    BurgerIngredients.propTypes = {
-        ingredients: ingredientType,
-      };
+    BurgerIngredients.propTypes = ingredientType;
 
     return (
         <section className={burgeringredientsStyles.ingredients}>

@@ -1,16 +1,14 @@
 import React from 'react';
 import { CurrencyIcon, Counter } from '@ya.praktikum/react-developer-burger-ui-components';
 import burgerConstructorStyles from './burgerConstructor.module.css';
-import { ingredientType } from '../../utils/types'; 
+import { ingredientType } from '../../utils/types';
 
 function BurgerConstructor({ data }) {
   const buns = data.filter(item => item.type === 'bun');
   const sauces = data.filter(item => item.type === 'sauce');
   const mains = data.filter(item => item.type === 'main');
 
-  BurgerConstructor.ppropTypes = {
-    ingredients: ingredientType,
-  };
+  BurgerConstructor.propTypes = ingredientType;
 
   return (
     <section>
