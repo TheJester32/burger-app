@@ -36,11 +36,11 @@ function App() {
 
   return (
     <>
+      <Header />
       {isLoading && <div>Загрузка...</div>}
       {error && <div>Ошибка: {error}</div>}
       {data && (
         <>
-          <Header />
           <main className={appStyles.main}>
             <div className={appStyles.main__inner_content}>
               <BurgerConstructor data={data} />
