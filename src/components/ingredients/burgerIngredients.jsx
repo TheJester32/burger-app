@@ -4,7 +4,7 @@ import burgeringredientsStyles from './burgerIngredients.module.css';
 import { ingredientType } from '../../utils/types'; 
 
 function BurgerIngredients({ data }) {
-    const bun = data.filter(item => item.type === 'bun' && item._id === '60666c42cc7b410027a1a9b1')[0];
+    const bun = data.filter(item => item.type === 'bun' && item._id === '643d69a5c3f7b9001cfa093c')[0];
     const mains = data.filter(item => item.type === 'main');
     const sauces = data.filter(item => item.type === 'sauce');
 
