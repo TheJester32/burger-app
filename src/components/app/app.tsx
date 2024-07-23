@@ -16,7 +16,7 @@ function App() {
       try {
         const response = await fetch(API_URL);
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error('Сервер не отвечает');
         }
         const result = await response.json();
         setData(result.data);
@@ -24,7 +24,7 @@ function App() {
         if (err instanceof Error) {
           setError(err.message);
         } else {
-          setError('An unknown error occurred');
+          setError('Неизвестная ошибка');
         }
       } finally {
         setIsLoading(false);
@@ -34,23 +34,21 @@ function App() {
     fetchData();
   }, []);
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
-
   return (
     <>
-      <Header />
-      <main className={appStyles.main}>
-        <div className={appStyles.main__inner_content}>
-          <BurgerConstructor data={data} />
-          <BurgerIngredients data={data}/>
-        </div>
-      </main>
+      {isLoading && <div>Загрузка...</div>}
+      {error && <div>Ошибка: {error}</div>}
+      {data && (
+        <>
+          <Header />
+          <main className={appStyles.main}>
+            <div className={appStyles.main__inner_content}>
+              <BurgerConstructor data={data} />
+              <BurgerIngredients data={data} />
+            </div>
+          </main>
+        </>
+      )}
     </>
   );
 }
