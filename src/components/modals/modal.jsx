@@ -1,10 +1,11 @@
 import React, { useEffect } from "react";
 import ReactDOM from "react-dom";
+import PropTypes from "prop-types";
 import { CloseIcon } from '@ya.praktikum/react-developer-burger-ui-components';
 import modalStyles from "./modal.module.css";
 import ModalOverlay from './modalOverlay';
 
-function Modals({ children, isOpen, handleClose }) {
+function Modal({ children, isOpen, handleClose }) {
   useEffect(() => {
     const closeOnEscapeKey = (e) => {
       if (e.key === "Escape") {
@@ -31,4 +32,10 @@ function Modals({ children, isOpen, handleClose }) {
   );
 }
 
-export default Modals;
+Modal.propTypes = {
+  children: PropTypes.node.isRequired,
+  isOpen: PropTypes.bool.isRequired,
+  handleClose: PropTypes.func.isRequired,
+};
+
+export default Modal;

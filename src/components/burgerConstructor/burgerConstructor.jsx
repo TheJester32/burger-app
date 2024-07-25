@@ -1,24 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { CurrencyIcon, Counter } from '@ya.praktikum/react-developer-burger-ui-components';
-
 import burgerConstructorStyles from './burgerConstructor.module.css';
 import { ingredientType } from '../../utils/types';
-import OrderDetailsModal from '../modals/orderDetails';
 
-function BurgerConstructor({ data }) {
-  const [isModalOpen, setModalOpen] = useState(false);
-  const [selectedIngredient, setSelectedIngredient] = useState(null);
-
-  const handleOpen = (ingredient) => {
-    setSelectedIngredient(ingredient);
-    setModalOpen(true);
-  };
-
-  const handleClose = () => {
-    setModalOpen(false);
-    setSelectedIngredient(null);
-  };
-
+function BurgerConstructor({ data, handleIngredientDetailsOpen }) {
   const buns = data.filter(item => item.type === 'bun');
   const sauces = data.filter(item => item.type === 'sauce');
   const mains = data.filter(item => item.type === 'main');
@@ -37,7 +22,7 @@ function BurgerConstructor({ data }) {
         <li className="text text_type_main-medium">Булки</li>
         <div className={burgerConstructorStyles.constructor__elements_wrapper}>
           {buns.map(bun => (
-            <li key={bun._id} className={`p-3 ${burgerConstructorStyles.constructor__element_wrap}`} onClick={() => handleOpen(bun)}>
+            <li key={bun._id} className={`p-3 ${burgerConstructorStyles.constructor__element_wrap}`} onClick={() => handleIngredientDetailsOpen(bun)}>
               <Counter count={0} size="default" extraClass="m-1" />
               <img src={bun.image} alt={bun.name} />
               <div className={burgerConstructorStyles.constructor__element_price_wrapper}>
@@ -51,7 +36,7 @@ function BurgerConstructor({ data }) {
         <li className="text text_type_main-medium">Соусы</li>
         <div className={burgerConstructorStyles.constructor__elements_wrapper}>
           {sauces.map(sauce => (
-            <li key={sauce._id} className={`p-3 ${burgerConstructorStyles.constructor__element_wrap}`} onClick={() => handleOpen(sauce)}>
+            <li key={sauce._id} className={`p-3 ${burgerConstructorStyles.constructor__element_wrap}`} onClick={() => handleIngredientDetailsOpen(sauce)}>
               <Counter count={0} size="default" extraClass="m-1" />
               <img src={sauce.image} alt={sauce.name} />
               <div className={burgerConstructorStyles.constructor__element_price_wrapper}>
@@ -65,7 +50,7 @@ function BurgerConstructor({ data }) {
         <li className="text text_type_main-medium">Начинки</li>
         <div className={burgerConstructorStyles.constructor__elements_wrapper}>
           {mains.map(main => (
-            <li key={main._id} className={`p-3 ${burgerConstructorStyles.constructor__element_wrap}`} onClick={() => handleOpen(main)}>
+            <li key={main._id} className={`p-3 ${burgerConstructorStyles.constructor__element_wrap}`} onClick={() => handleIngredientDetailsOpen(main)}>
               <img src={main.image} alt={main.name} />
               <div className={burgerConstructorStyles.constructor__element_price_wrapper}>
                 <p className={`text text_type_digits-default ${burgerConstructorStyles.constructor__element_price}`}>{main.price}</p>
@@ -76,35 +61,6 @@ function BurgerConstructor({ data }) {
           ))}
         </div>
       </ul>
-      {selectedIngredient && (
-        <OrderDetailsModal isOpen={isModalOpen} handleClose={handleClose}>
-          <div className={`${burgerConstructorStyles.constructor__modal_wrapper}`}>
-            <h3 className='text text_type_main-large'>Детали ингредиента</h3>
-            <div className={burgerConstructorStyles.constructor__modal_inner}>
-              <img src={selectedIngredient.image_large} alt={selectedIngredient.name} />
-              <p className='text text_type_main-medium'>{selectedIngredient.name}</p>
-              <div className={burgerConstructorStyles.constructor__modal_inner_description_wrapper}>
-                <div>
-                  <p className="text text_type_main-default text_color_inactive">Калории,ккал</p>
-                  <p className="text text_type_digits-default text_color_inactive p-4">{selectedIngredient.calories}</p>
-                </div>
-                <div>
-                  <p className="text text_type_main-default text_color_inactive">Белки, г</p>
-                  <p className="text text_type_digits-default text_color_inactive  p-4">{selectedIngredient.proteins}</p>
-                </div>
-                <div>
-                  <p className="text text_type_main-default text_color_inactive">Жиры, г</p>
-                  <p className="text text_type_digits-default text_color_inactive  p-4">{selectedIngredient.fat}</p>
-                </div>
-                <div>
-                  <p className="text text_type_main-default text_color_inactive">Углеводы, г</p>
-                  <p className="text text_type_digits-default text_color_inactive  p-4">{selectedIngredient.carbohydrates}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </OrderDetailsModal>
-      )}
     </section>
   );
 }

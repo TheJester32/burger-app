@@ -1,20 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { CurrencyIcon, LockIcon, DragIcon, DeleteIcon, Button } from '@ya.praktikum/react-developer-burger-ui-components';
-import doneImage from '../../images/done.png';
 import burgeringredientsStyles from './burgerIngredients.module.css';
 import { ingredientType } from '../../utils/types';
-import IngredientDetails from '../modals/ingredientDetails';
 
-function BurgerIngredients({ data }) {
-    const [isModalOpen, setModalOpen] = useState(false);
-
-    const handleOpen = () => {
-        setModalOpen(true);
-    };
-
-    const handleClose = () => {
-        setModalOpen(false);
-    };
+function BurgerIngredients({ data, handleOrderDetailsOpen }) {
 
     const bun = data.filter(item => item.type === 'bun' && item._id === '643d69a5c3f7b9001cfa093c')[0];
     const mains = data.filter(item => item.type === 'main');
@@ -93,25 +82,10 @@ function BurgerIngredients({ data }) {
                     <h2 className={`text text_type_digits-medium ${burgeringredientsStyles.ingredients__final_price_digit}`}>610</h2>
                     <CurrencyIcon />
                 </div>
-                <Button htmlType="button" type="primary" size="large" onClick={() => handleOpen()}>
+                <Button htmlType="button" type="primary" size="large" onClick={() => handleOrderDetailsOpen()}>
                     Оформить заказ
                 </Button>
             </div>
-            <IngredientDetails isOpen={isModalOpen} handleClose={handleClose}>
-                <div className={`${burgeringredientsStyles.ingredients__modal_wrapper}`}>
-                    <div className={burgeringredientsStyles.ingredients__modal_inner}>
-                        <h3 className="text text_type_digits-large p-10">034536</h3>
-                        <p className='text text_type_main-medium p-4'>идентификатор заказа</p>
-                        <img
-                            className={burgeringredientsStyles.ingredients__modal_inner_done}
-                            src={doneImage}
-                            alt="Иконка готово."
-                        />
-                        <p className="text text_type_main-small p-2">Ваш заказ начали готовить</p>
-                        <p className="text text_type_main-small text_color_inactive p-2">Дождитесь готовности на орбитальной станции</p>
-                    </div>
-                </div>
-            </IngredientDetails>
         </section>
     );
 }
