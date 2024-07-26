@@ -1,10 +1,11 @@
 import React from 'react';
 import { CurrencyIcon, LockIcon, DragIcon, DeleteIcon, Button } from '@ya.praktikum/react-developer-burger-ui-components';
 import burgeringredientsStyles from './burgerIngredients.module.css';
-import { ingredientType } from '../../utils/types'; 
+import { ingredientType } from '../../utils/types';
 
-function BurgerIngredients({ data }) {
-    const bun = data.filter(item => item.type === 'bun' && item._id === '60666c42cc7b410027a1a9b1')[0];
+function BurgerIngredients({ data, handleOrderDetailsOpen }) {
+
+    const bun = data.filter(item => item.type === 'bun' && item._id === '643d69a5c3f7b9001cfa093c')[0];
     const mains = data.filter(item => item.type === 'main');
     const sauces = data.filter(item => item.type === 'sauce');
 
@@ -50,29 +51,29 @@ function BurgerIngredients({ data }) {
                         <div className={`${burgeringredientsStyles.ingredients__main_list_inner_wrapper} ${burgeringredientsStyles.ingredients__default_bun_inner}`}>
                             <img src={main.image_mobile} alt={main.name} />
                             <p className={`text text_type_main-default ${burgeringredientsStyles.ingredients__name}`}>{main.name}</p>
-                        <div className={burgeringredientsStyles.ingredients__main_list_inner__secondary_wrapper}>
-                            <div className={burgeringredientsStyles.ingredients__main_list_price_wrapper}>
-                                <p className={`text text_type_digits-default ${burgeringredientsStyles.ingredients__main_list_price}`}>{main.price}</p>
-                                <CurrencyIcon className={burgeringredientsStyles.ingredients__currency} />
+                            <div className={burgeringredientsStyles.ingredients__main_list_inner__secondary_wrapper}>
+                                <div className={burgeringredientsStyles.ingredients__main_list_price_wrapper}>
+                                    <p className={`text text_type_digits-default ${burgeringredientsStyles.ingredients__main_list_price}`}>{main.price}</p>
+                                    <CurrencyIcon className={burgeringredientsStyles.ingredients__currency} />
+                                </div>
+                                <DeleteIcon />
                             </div>
-                            <DeleteIcon />
-                        </div>
                         </div>
                     </li>
                 ))}
             </ul>
             <ul className={burgeringredientsStyles.ingredients__default_list}>
                 <li key={bun._id} className={`p-2 ${burgeringredientsStyles.ingredients__lower_bun}`}>
-                <div className={`${burgeringredientsStyles.ingredients__main_list_inner_wrapper} ${burgeringredientsStyles.ingredients__lower_bun_inner}`}>
+                    <div className={`${burgeringredientsStyles.ingredients__main_list_inner_wrapper} ${burgeringredientsStyles.ingredients__lower_bun_inner}`}>
                         <img src={bun.image_mobile} alt={bun.name} />
                         <p className={`text text_type_main-default ${burgeringredientsStyles.ingredients__name}`}>{`${bun.name} (низ)`}</p>
-                    <div className={burgeringredientsStyles.ingredients__main_list_inner__secondary_wrapper}>
-                        <div className={burgeringredientsStyles.ingredients__main_list_price_wrapper}>
-                            <p className={`text text_type_digits-default ${burgeringredientsStyles.ingredients__main_list_price}`}>{bun.price}</p>
-                            <CurrencyIcon />
+                        <div className={burgeringredientsStyles.ingredients__main_list_inner__secondary_wrapper}>
+                            <div className={burgeringredientsStyles.ingredients__main_list_price_wrapper}>
+                                <p className={`text text_type_digits-default ${burgeringredientsStyles.ingredients__main_list_price}`}>{bun.price}</p>
+                                <CurrencyIcon />
+                            </div>
+                            <LockIcon type="secondary" />
                         </div>
-                        <LockIcon type="secondary" />
-                    </div>
                     </div>
                 </li>
             </ul>
@@ -81,7 +82,7 @@ function BurgerIngredients({ data }) {
                     <h2 className={`text text_type_digits-medium ${burgeringredientsStyles.ingredients__final_price_digit}`}>610</h2>
                     <CurrencyIcon />
                 </div>
-                <Button htmlType="button" type="primary" size="large">
+                <Button htmlType="button" type="primary" size="large" onClick={() => handleOrderDetailsOpen()}>
                     Оформить заказ
                 </Button>
             </div>
