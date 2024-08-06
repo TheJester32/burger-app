@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Header } from '../header/appHeader';
+import { BurgerIngredients } from '../burgerIngredients/burgerIngredients';
 import { BurgerConstructor } from '../burgerConstructor/burgerConstructor';
-import { BurgerIngredients } from '../ingredients/burgerIngredients';
 import appStyles from './app.module.css';
 import Modal from '../modals/modal';
 import { ingredientType } from '../../utils/tsTypes';
@@ -48,14 +48,15 @@ function App() {
         <>
           <main className={appStyles.main}>
             <div className={appStyles.main__inner_content}>
-              <BurgerConstructor 
-                data={allIngredients} 
-                handleIngredientDetailsOpen={handleIngredientDetailsOpen} 
+            <BurgerIngredients
+                data={allIngredients}
+                handleIngredientDetailsOpen={handleIngredientDetailsOpen}
+
               />
-              <BurgerIngredients 
-                data={allIngredients} 
-                handleOrderDetailsOpen={handleOrderDetailsOpen} 
-                handleIngredientDrop={handleIngredientDrop} 
+              <BurgerConstructor
+                data={allIngredients}
+                handleOrderDetailsOpen={handleOrderDetailsOpen}
+                handleIngredientDrop={handleIngredientDrop}
               />
             </div>
           </main>
