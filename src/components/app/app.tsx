@@ -1,86 +1,72 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Header } from '../header/appHeader';
 import { BurgerConstructor } from '../burgerConstructor/burgerConstructor';
 import { BurgerIngredients } from '../ingredients/burgerIngredients';
 import appStyles from './app.module.css';
 import Modal from '../modals/modal';
+import { ingredientType } from '../../utils/tsTypes';
 import IngredientDetails from '../modals/ingredientModal/ingredientDetails';
 import OrderDetails from '../modals/orderModal/orderDetails';
-import { ingredientType } from '../../utils/tsTypes';
-
-const API_URL = 'https://norma.nomoreparties.space/api/ingredients';
+import { fetchIngredients, setViewedIngredient, createOrder, addConstructorIngredient } from '../../store/reducers/ingredientsSlice';
+import { RootState, AppDispatch } from '../../store/store';
 
 function App() {
-  const [data, setData] = useState<ingredientType[] | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  const [showIngredientModal, setShowIngredientModal] = useState(false);
-  const [showOrderModal, setShowOrderModal] = useState(false);
-  const [selectedIngredient, setSelectedIngredient] = useState<ingredientType | null>(null);
+  const dispatch: AppDispatch = useDispatch();
+  const { allIngredients, viewedIngredient, orderNumber, loading, error } = useSelector((state: RootState) => state.ingredients);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(API_URL);
-        if (!response.ok) {
-          throw new Error('Сервер не отвечает');
-        }
-        const result = await response.json();
-        setData(result.data);
-      } catch (err) {
-        if (err instanceof Error) {
-          setError(err.message);
-        } else {
-          setError('Неизвестная ошибка');
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
+    dispatch(fetchIngredients());
+  }, [dispatch]);
 
   const handleIngredientDetailsOpen = (ingredient: ingredientType) => {
-    setSelectedIngredient(ingredient);
-    setShowIngredientModal(true);
+    dispatch(setViewedIngredient(ingredient));
   };
 
   const handleIngredientDetailsClose = () => {
-    setShowIngredientModal(false);
-    setSelectedIngredient(null);
+    dispatch(setViewedIngredient(null as any));
   };
 
   const handleOrderDetailsOpen = () => {
-    setShowOrderModal(true);
+    const ingredients: ingredientType[] = [];
+    dispatch(createOrder(ingredients));
   };
 
-  const handleOrderDetailsClose = () => {
-    setShowOrderModal(false);
+  const handleIngredientDrop = (id: string) => {
+    const ingredient = allIngredients.find(ing => ing._id === id);
+    if (ingredient) {
+      dispatch(addConstructorIngredient(ingredient));
+    }
   };
 
   return (
     <>
       <Header />
-      {isLoading && <div>Загрузка...</div>}
+      {loading && <div>Загрузка...</div>}
       {error && <div>Ошибка: {error}</div>}
-      {data && (
+      {allIngredients.length > 0 && (
         <>
           <main className={appStyles.main}>
             <div className={appStyles.main__inner_content}>
-              <BurgerConstructor data={data} handleIngredientDetailsOpen={handleIngredientDetailsOpen} />
-              <BurgerIngredients data={data} handleOrderDetailsOpen={handleOrderDetailsOpen} />
+              <BurgerConstructor 
+                data={allIngredients} 
+                handleIngredientDetailsOpen={handleIngredientDetailsOpen} 
+              />
+              <BurgerIngredients 
+                data={allIngredients} 
+                handleOrderDetailsOpen={handleOrderDetailsOpen} 
+                handleIngredientDrop={handleIngredientDrop} 
+              />
             </div>
           </main>
-          {showIngredientModal && selectedIngredient && (
-            <Modal isOpen={showIngredientModal} handleClose={handleIngredientDetailsClose}>
-              <IngredientDetails ingredient={selectedIngredient} />
+          {viewedIngredient && (
+            <Modal isOpen={Boolean(viewedIngredient)} handleClose={handleIngredientDetailsClose}>
+              <IngredientDetails ingredient={viewedIngredient} />
             </Modal>
           )}
-          {showOrderModal && (
-            <Modal isOpen={showOrderModal} handleClose={handleOrderDetailsClose}>
-              <OrderDetails />
+          {orderNumber && (
+            <Modal isOpen={Boolean(orderNumber)} handleClose={() => dispatch(createOrder([]))}>
+              <OrderDetails orderNumber={orderNumber} />
             </Modal>
           )}
         </>
