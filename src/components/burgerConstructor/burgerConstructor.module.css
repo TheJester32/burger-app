@@ -103,3 +103,13 @@
     border-top-left-radius: 20px;
     border-top-right-radius: 20px;
 }
+
+.empty_constructor_text{
+    background-color: #131316;
+    width: fit-content;
+    color: #2ffdc8;
+    text-align: center;
+    padding-left: auto;
+    margin-left: auto;
+    margin-right: 3rem;
+}

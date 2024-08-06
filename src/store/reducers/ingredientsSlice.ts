@@ -3,6 +3,7 @@ import { ingredientType } from '../../utils/tsTypes';
 
 interface IngredientsState {
   allIngredients: ingredientType[];
+  buns: ingredientType[];
   constructorIngredients: ingredientType[];
   viewedIngredient: ingredientType | null;
   createdOrder: any;
@@ -13,6 +14,7 @@ interface IngredientsState {
 
 const initialState: IngredientsState = {
   allIngredients: [],
+  buns: [],
   constructorIngredients: [],
   viewedIngredient: null,
   createdOrder: null,
@@ -20,7 +22,6 @@ const initialState: IngredientsState = {
   loading: false,
   error: null,
 };
-
 
 export const fetchIngredients = createAsyncThunk('ingredients/fetchIngredients', async () => {
   const response = await fetch('https://norma.nomoreparties.space/api/ingredients');
@@ -52,6 +53,9 @@ const ingredientsSlice = createSlice({
   reducers: {
     setViewedIngredient(state, action: PayloadAction<ingredientType | null>) {
       state.viewedIngredient = action.payload;
+    },
+    setBun(state, action: PayloadAction<ingredientType>) {
+      state.buns = [action.payload];
     },
     addConstructorIngredient(state, action: PayloadAction<ingredientType>) {
       state.constructorIngredients.push(action.payload);
@@ -89,5 +93,5 @@ const ingredientsSlice = createSlice({
   },
 });
 
-export const { setViewedIngredient, addConstructorIngredient, removeConstructorIngredient } = ingredientsSlice.actions;
+export const { setViewedIngredient, setBun, addConstructorIngredient, removeConstructorIngredient } = ingredientsSlice.actions;
 export default ingredientsSlice.reducer;

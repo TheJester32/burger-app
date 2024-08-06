@@ -1,14 +1,57 @@
 import React from 'react';
+import { useDrag } from 'react-dnd';
 import { CurrencyIcon, Counter } from '@ya.praktikum/react-developer-burger-ui-components';
 import burgerIngredientsStyles from './burgerIngredients.module.css';
-import { ingredientType } from '../../utils/types';
+import { useSelector } from 'react-redux';
 
 function BurgerIngredients({ data, handleIngredientDetailsOpen }) {
-  const buns = data.filter(item => item.type === 'bun');
-  const sauces = data.filter(item => item.type === 'sauce');
-  const mains = data.filter(item => item.type === 'main');
+  const constructorIngredients = useSelector(state => state.ingredients.constructorIngredients);
+  const buns = useSelector(state => state.ingredients.buns);
 
-  BurgerIngredients.propTypes = ingredientType;
+  const getIngredientCount = (id) => {
+    let count = 0;
+    if (buns.some(bun => bun._id === id)) {
+      count += 1;
+    }
+    constructorIngredients.forEach(item => {
+      if (item._id === id) {
+        count++;
+      }
+    });
+    return count;
+  };
+
+  const Ingredient = ({ item }) => {
+    const [{ isDragging }, drag] = useDrag(() => ({
+      type: 'ingredient',
+      item: { id: item._id, type: item.type },
+      collect: (monitor) => ({
+        isDragging: monitor.isDragging(),
+      }),
+    }));
+
+    return (
+      <li
+        ref={drag}
+        key={item._id}
+        className={`p-3 ${burgerIngredientsStyles.constructor__element_wrap}`}
+        onClick={() => handleIngredientDetailsOpen(item)}
+        style={{ opacity: isDragging ? 0.5 : 1 }}
+      >
+        <Counter count={getIngredientCount(item._id)} size="default" extraClass="m-1" />
+        <img src={item.image} alt={item.name} />
+        <div className={burgerIngredientsStyles.constructor__element_price_wrapper}>
+          <p className={`text text_type_digits-default ${burgerIngredientsStyles.constructor__element_price}`}>{item.price}</p>
+          <CurrencyIcon />
+        </div>
+        <p className="text text_type_main-default p-1">{item.name}</p>
+      </li>
+    );
+  };
+
+  const bunsData = data.filter(item => item.type === 'bun');
+  const saucesData = data.filter(item => item.type === 'sauce');
+  const mainsData = data.filter(item => item.type === 'main');
 
   return (
     <section>
@@ -21,43 +64,20 @@ function BurgerIngredients({ data, handleIngredientDetailsOpen }) {
       <ul className={`custom-scroll ${burgerIngredientsStyles.constructor__elements_container}`}>
         <li className="text text_type_main-medium">Булки</li>
         <div className={burgerIngredientsStyles.constructor__elements_wrapper}>
-          {buns.map(bun => (
-            <li key={bun._id} className={`p-3 ${burgerIngredientsStyles.constructor__element_wrap}`} onClick={() => handleIngredientDetailsOpen(bun)}>
-              <Counter count={0} size="default" extraClass="m-1" />
-              <img src={bun.image} alt={bun.name} />
-              <div className={burgerIngredientsStyles.constructor__element_price_wrapper}>
-                <p className={`text text_type_digits-default ${burgerIngredientsStyles.constructor__element_price}`}>{bun.price}</p>
-                <CurrencyIcon />
-              </div>
-              <p className="text text_type_main-default p-1">{bun.name}</p>
-            </li>
+          {bunsData.map(bun => (
+            <Ingredient key={bun._id} item={bun} />
           ))}
         </div>
         <li className="text text_type_main-medium">Соусы</li>
         <div className={burgerIngredientsStyles.constructor__elements_wrapper}>
-          {sauces.map(sauce => (
-            <li key={sauce._id} className={`p-3 ${burgerIngredientsStyles.constructor__element_wrap}`} onClick={() => handleIngredientDetailsOpen(sauce)}>
-              <Counter count={0} size="default" extraClass="m-1" />
-              <img src={sauce.image} alt={sauce.name} />
-              <div className={burgerIngredientsStyles.constructor__element_price_wrapper}>
-                <p className={`text text_type_digits-default ${burgerIngredientsStyles.constructor__element_price}`}>{sauce.price}</p>
-                <CurrencyIcon />
-              </div>
-              <p className="text text_type_main-default p-1">{sauce.name}</p>
-            </li>
+          {saucesData.map(sauce => (
+            <Ingredient key={sauce._id} item={sauce} />
           ))}
         </div>
         <li className="text text_type_main-medium">Начинки</li>
         <div className={burgerIngredientsStyles.constructor__elements_wrapper}>
-          {mains.map(main => (
-            <li key={main._id} className={`p-3 ${burgerIngredientsStyles.constructor__element_wrap}`} onClick={() => handleIngredientDetailsOpen(main)}>
-              <img src={main.image} alt={main.name} />
-              <div className={burgerIngredientsStyles.constructor__element_price_wrapper}>
-                <p className={`text text_type_digits-default ${burgerIngredientsStyles.constructor__element_price}`}>{main.price}</p>
-                <CurrencyIcon />
-              </div>
-              <p className="text text_type_main-default p-1">{main.name}</p>
-            </li>
+          {mainsData.map(main => (
+            <Ingredient key={main._id} item={main} />
           ))}
         </div>
       </ul>

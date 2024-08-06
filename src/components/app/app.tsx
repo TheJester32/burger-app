@@ -1,4 +1,6 @@
 import React, { useEffect } from 'react';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useDispatch, useSelector } from 'react-redux';
 import { Header } from '../header/appHeader';
 import { BurgerIngredients } from '../burgerIngredients/burgerIngredients';
@@ -8,12 +10,12 @@ import Modal from '../modals/modal';
 import { ingredientType } from '../../utils/tsTypes';
 import IngredientDetails from '../modals/ingredientModal/ingredientDetails';
 import OrderDetails from '../modals/orderModal/orderDetails';
-import { fetchIngredients, setViewedIngredient, createOrder, addConstructorIngredient } from '../../store/reducers/ingredientsSlice';
+import { fetchIngredients, setViewedIngredient, createOrder, setBun, addConstructorIngredient } from '../../store/reducers/ingredientsSlice';
 import { RootState, AppDispatch } from '../../store/store';
 
 function App() {
   const dispatch: AppDispatch = useDispatch();
-  const { allIngredients, viewedIngredient, orderNumber, loading, error } = useSelector((state: RootState) => state.ingredients);
+  const { allIngredients, buns, constructorIngredients, viewedIngredient, orderNumber, loading, error } = useSelector((state: RootState) => state.ingredients);
 
   useEffect(() => {
     dispatch(fetchIngredients());
@@ -28,19 +30,26 @@ function App() {
   };
 
   const handleOrderDetailsOpen = () => {
-    const ingredients: ingredientType[] = [];
+    const ingredients = [
+      ...buns,
+      ...constructorIngredients
+    ];
     dispatch(createOrder(ingredients));
   };
 
   const handleIngredientDrop = (id: string) => {
     const ingredient = allIngredients.find(ing => ing._id === id);
     if (ingredient) {
-      dispatch(addConstructorIngredient(ingredient));
+      if (ingredient.type === 'bun') {
+        dispatch(setBun(ingredient));
+      } else {
+        dispatch(addConstructorIngredient(ingredient));
+      }
     }
   };
 
   return (
-    <>
+    <DndProvider backend={HTML5Backend}>
       <Header />
       {loading && <div>Загрузка...</div>}
       {error && <div>Ошибка: {error}</div>}
@@ -48,13 +57,12 @@ function App() {
         <>
           <main className={appStyles.main}>
             <div className={appStyles.main__inner_content}>
-            <BurgerIngredients
+              <BurgerIngredients
                 data={allIngredients}
                 handleIngredientDetailsOpen={handleIngredientDetailsOpen}
-
               />
               <BurgerConstructor
-                data={allIngredients}
+                data={[...buns, ...constructorIngredients]}
                 handleOrderDetailsOpen={handleOrderDetailsOpen}
                 handleIngredientDrop={handleIngredientDrop}
               />
@@ -72,7 +80,7 @@ function App() {
           )}
         </>
       )}
-    </>
+    </DndProvider>
   );
 }
 
