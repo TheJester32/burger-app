@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
+import { v4 as uuidv4 } from 'uuid';
 import { ingredientType } from '../../utils/tsTypes';
 
 interface IngredientsState {
@@ -55,13 +56,23 @@ const ingredientsSlice = createSlice({
       state.viewedIngredient = action.payload;
     },
     setBun(state, action: PayloadAction<ingredientType>) {
-      state.buns = [action.payload];
+      const bunWithUUID = { ...action.payload, uuid: uuidv4() };
+      state.buns = [bunWithUUID];
     },
     addConstructorIngredient(state, action: PayloadAction<ingredientType>) {
-      state.constructorIngredients.push(action.payload);
+      const ingredientWithUUID = { ...action.payload, uuid: uuidv4() };
+      state.constructorIngredients.push(ingredientWithUUID);
     },
     removeConstructorIngredient(state, action: PayloadAction<string>) {
-      state.constructorIngredients = state.constructorIngredients.filter(ingredient => ingredient._id !== action.payload);
+      const index = state.constructorIngredients.findIndex(ingredient => ingredient.uuid === action.payload);
+      if (index !== -1) {
+        state.constructorIngredients.splice(index, 1);
+      }
+    },
+    reorderConstructorIngredients(state, action: PayloadAction<{ fromIndex: number, toIndex: number }>) {
+      const { fromIndex, toIndex } = action.payload;
+      const [movedIngredient] = state.constructorIngredients.splice(fromIndex, 1);
+      state.constructorIngredients.splice(toIndex, 0, movedIngredient);
     },
   },
   extraReducers: (builder) => {
@@ -93,5 +104,5 @@ const ingredientsSlice = createSlice({
   },
 });
 
-export const { setViewedIngredient, setBun, addConstructorIngredient, removeConstructorIngredient } = ingredientsSlice.actions;
+export const { setViewedIngredient, setBun, addConstructorIngredient, removeConstructorIngredient, reorderConstructorIngredients } = ingredientsSlice.actions;
 export default ingredientsSlice.reducer;

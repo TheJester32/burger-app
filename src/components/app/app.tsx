@@ -10,12 +10,28 @@ import Modal from '../modals/modal';
 import { ingredientType } from '../../utils/tsTypes';
 import IngredientDetails from '../modals/ingredientModal/ingredientDetails';
 import OrderDetails from '../modals/orderModal/orderDetails';
-import { fetchIngredients, setViewedIngredient, createOrder, setBun, addConstructorIngredient } from '../../store/reducers/ingredientsSlice';
+import {
+  fetchIngredients,
+  setViewedIngredient,
+  createOrder,
+  setBun,
+  addConstructorIngredient,
+  removeConstructorIngredient,
+  reorderConstructorIngredients
+} from '../../store/reducers/ingredientsSlice';
 import { RootState, AppDispatch } from '../../store/store';
 
 function App() {
   const dispatch: AppDispatch = useDispatch();
-  const { allIngredients, buns, constructorIngredients, viewedIngredient, orderNumber, loading, error } = useSelector((state: RootState) => state.ingredients);
+  const {
+    allIngredients,
+    buns,
+    constructorIngredients,
+    viewedIngredient,
+    orderNumber,
+    loading,
+    error
+  } = useSelector((state: RootState) => state.ingredients);
 
   useEffect(() => {
     dispatch(fetchIngredients());
@@ -26,14 +42,11 @@ function App() {
   };
 
   const handleIngredientDetailsClose = () => {
-    dispatch(setViewedIngredient(null as any));
+    dispatch(setViewedIngredient(null));
   };
 
   const handleOrderDetailsOpen = () => {
-    const ingredients = [
-      ...buns,
-      ...constructorIngredients
-    ];
+    const ingredients = [...buns, ...constructorIngredients];
     dispatch(createOrder(ingredients));
   };
 
@@ -46,6 +59,14 @@ function App() {
         dispatch(addConstructorIngredient(ingredient));
       }
     }
+  };
+
+  const handleRemove = (id: string) => {
+    dispatch(removeConstructorIngredient(id));
+  };
+
+  const handleReorder = (fromIndex: number, toIndex: number) => {
+    dispatch(reorderConstructorIngredients({ fromIndex, toIndex }));
   };
 
   return (
@@ -65,6 +86,8 @@ function App() {
                 data={[...buns, ...constructorIngredients]}
                 handleOrderDetailsOpen={handleOrderDetailsOpen}
                 handleIngredientDrop={handleIngredientDrop}
+                handleRemove={handleRemove}
+                handleReorder={handleReorder}
               />
             </div>
           </main>
