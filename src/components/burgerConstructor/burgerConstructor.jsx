@@ -1,68 +1,162 @@
 import React from 'react';
-import { CurrencyIcon, Counter } from '@ya.praktikum/react-developer-burger-ui-components';
+import { useDrop, useDrag } from 'react-dnd';
+import { CurrencyIcon, LockIcon, DragIcon, DeleteIcon, Button } from '@ya.praktikum/react-developer-burger-ui-components';
 import burgerConstructorStyles from './burgerConstructor.module.css';
+import PropTypes from 'prop-types';
 import { ingredientType } from '../../utils/types';
 
-function BurgerConstructor({ data, handleIngredientDetailsOpen }) {
-  const buns = data.filter(item => item.type === 'bun');
-  const sauces = data.filter(item => item.type === 'sauce');
-  const mains = data.filter(item => item.type === 'main');
+const IngredientItem = ({ item, index, moveIngredient, handleRemove }) => {
+  const ref = React.useRef(null);
 
-  BurgerConstructor.propTypes = ingredientType;
+  const [, drop] = useDrop({
+    accept: 'constructor-ingredient',
+    hover(draggedItem) {
+      if (draggedItem.index === index) return;
+      moveIngredient(draggedItem.index, index);
+      draggedItem.index = index;
+    },
+  });
+
+  const [, drag] = useDrag({
+    type: 'constructor-ingredient',
+    item: { index },
+  });
+
+  drag(drop(ref));
 
   return (
-    <section>
-      <h1 className="text text_type_main-large">Соберите бургер</h1>
-      <div className={burgerConstructorStyles.constructor__options}>
-        <h3 className={`text text_type_main-default p-4 ${burgerConstructorStyles.focused_option}`}>Булки</h3>
-        <h3 className={`text text_type_main-default p-4 ${burgerConstructorStyles.unfocused_option}`}>Соусы</h3>
-        <h3 className={`text text_type_main-default p-4 ${burgerConstructorStyles.unfocused_option}`}>Начинки</h3>
+    <li ref={ref} className="p-2" key={item.uuid}>
+      <DragIcon />
+      <div className={`${burgerConstructorStyles.ingredients__main_list_inner_wrapper} ${burgerConstructorStyles.ingredients__default_bun_inner}`}>
+        <img src={item.image_mobile} alt={item.name} />
+        <p className={`text text_type_main-default ${burgerConstructorStyles.ingredients__name}`}>{item.name}</p>
+        <div className={burgerConstructorStyles.ingredients__main_list_inner__secondary_wrapper}>
+          <div className={burgerConstructorStyles.ingredients__main_list_price_wrapper}>
+            <p className={`text text_type_digits-default ${burgerConstructorStyles.ingredients__main_list_price}`}>{item.price}</p>
+            <CurrencyIcon className={burgerConstructorStyles.ingredients__currency} />
+          </div>
+          <DeleteIcon onClick={() => handleRemove(item.uuid)} />
+        </div>
       </div>
-      <ul className={`custom-scroll ${burgerConstructorStyles.constructor__elements_container}`}>
-        <li className="text text_type_main-medium">Булки</li>
-        <div className={burgerConstructorStyles.constructor__elements_wrapper}>
-          {buns.map(bun => (
-            <li key={bun._id} className={`p-3 ${burgerConstructorStyles.constructor__element_wrap}`} onClick={() => handleIngredientDetailsOpen(bun)}>
-              <Counter count={0} size="default" extraClass="m-1" />
-              <img src={bun.image} alt={bun.name} />
-              <div className={burgerConstructorStyles.constructor__element_price_wrapper}>
-                <p className={`text text_type_digits-default ${burgerConstructorStyles.constructor__element_price}`}>{bun.price}</p>
-                <CurrencyIcon />
+    </li>
+  );
+};
+
+function BurgerConstructor({ data, handleOrderDetailsOpen, handleIngredientDrop, handleReorder, handleRemove }) {
+  const [{ isOver }, drop] = useDrop(() => ({
+    accept: 'ingredient',
+    drop: (item, monitor) => {
+      if (monitor.didDrop()) return;
+      handleIngredientDrop(item.id, item.type);
+    },
+    collect: (monitor) => ({
+      isOver: monitor.isOver(),
+    }),
+  }));
+
+  const moveIngredient = (fromIndex, toIndex) => {
+    handleReorder(fromIndex, toIndex);
+  };
+
+  const bun = data.find(item => item.type === 'bun');
+  const mains = data.filter(item => item.type !== 'bun');
+
+  const totalPrice = data.reduce((acc, item) => acc + item.price, 0);
+  const adjustedTotalPrice = bun ? totalPrice + bun.price : totalPrice;
+  const isOrderDisabled = totalPrice === 0 || !bun;
+
+  return (
+    <section className={burgerConstructorStyles.ingredients} ref={drop}>
+      <ul className={burgerConstructorStyles.ingredients__default_list}>
+        {bun ? (
+          <li key={bun.uuid} className={`p-2 ${burgerConstructorStyles.ingredients__upper_bun}`}>
+            <div className={`${burgerConstructorStyles.ingredients__main_list_inner_wrapper} ${burgerConstructorStyles.ingredients__upper_bun_inner}`}>
+              <img src={bun.image_mobile} alt={bun.name} />
+              <p className={`text text_type_main-default ${burgerConstructorStyles.ingredients__name}`}>{`${bun.name} (верх)`}</p>
+              <div className={burgerConstructorStyles.ingredients__main_list_inner__secondary_wrapper}>
+                <div className={burgerConstructorStyles.ingredients__main_list_price_wrapper}>
+                  <p className={`text text_type_digits-default ${burgerConstructorStyles.ingredients__main_list_price}`}>{bun.price}</p>
+                  <CurrencyIcon />
+                </div>
+                <LockIcon type="secondary" />
               </div>
-              <p className="text text_type_main-default p-1">{bun.name}</p>
-            </li>
-          ))}
-        </div>
-        <li className="text text_type_main-medium">Соусы</li>
-        <div className={burgerConstructorStyles.constructor__elements_wrapper}>
-          {sauces.map(sauce => (
-            <li key={sauce._id} className={`p-3 ${burgerConstructorStyles.constructor__element_wrap}`} onClick={() => handleIngredientDetailsOpen(sauce)}>
-              <Counter count={0} size="default" extraClass="m-1" />
-              <img src={sauce.image} alt={sauce.name} />
-              <div className={burgerConstructorStyles.constructor__element_price_wrapper}>
-                <p className={`text text_type_digits-default ${burgerConstructorStyles.constructor__element_price}`}>{sauce.price}</p>
-                <CurrencyIcon />
-              </div>
-              <p className="text text_type_main-default p-1">{sauce.name}</p>
-            </li>
-          ))}
-        </div>
-        <li className="text text_type_main-medium">Начинки</li>
-        <div className={burgerConstructorStyles.constructor__elements_wrapper}>
-          {mains.map(main => (
-            <li key={main._id} className={`p-3 ${burgerConstructorStyles.constructor__element_wrap}`} onClick={() => handleIngredientDetailsOpen(main)}>
-              <img src={main.image} alt={main.name} />
-              <div className={burgerConstructorStyles.constructor__element_price_wrapper}>
-                <p className={`text text_type_digits-default ${burgerConstructorStyles.constructor__element_price}`}>{main.price}</p>
-                <CurrencyIcon />
-              </div>
-              <p className="text text_type_main-default p-1">{main.name}</p>
-            </li>
-          ))}
-        </div>
+            </div>
+          </li>
+        ) : (
+          <li className={`p-2 ${burgerConstructorStyles.ingredients__upper_bun}`} style={{ backgroundColor: isOver ? '#2ffdc8' : 'transparent' }}>
+            <div className={`${burgerConstructorStyles.ingredients__main_list_inner_wrapper} ${burgerConstructorStyles.empty_constructor_text}`}>
+              <p className={`text text_type_main-medium`}>Здесь могла бы быть ваша булочка</p>
+            </div>
+          </li>
+        )}
       </ul>
+      <ul className={`custom-scroll ${burgerConstructorStyles.ingredients__main_list}`}>
+        {mains.length ? (
+          mains.map((main, index) => (
+            <IngredientItem
+              key={main.uuid}
+              item={main}
+              index={index}
+              moveIngredient={moveIngredient}
+              handleRemove={handleRemove}
+            />
+          ))
+        ) : (
+          <li className={`p-2 ${burgerConstructorStyles.ingredients__main_list}`}>
+            <div className={`${burgerConstructorStyles.ingredients__main_list_inner_wrapper} ${burgerConstructorStyles.empty_constructor_text}`}>
+              <p className={`text text_type_main-medium`} style={{ backgroundColor: isOver ? '#2ffdc8' : 'transparent' }}>Перетащите ваши ингредиенты сюда</p>
+            </div>
+          </li>
+        )}
+      </ul>
+      <ul className={burgerConstructorStyles.ingredients__default_list}>
+        {bun ? (
+          <li key={bun.uuid} className={`p-2 ${burgerConstructorStyles.ingredients__lower_bun}`}>
+            <div className={`${burgerConstructorStyles.ingredients__main_list_inner_wrapper} ${burgerConstructorStyles.ingredients__lower_bun_inner}`}>
+              <img src={bun.image_mobile} alt={bun.name} />
+              <p className={`text text_type_main-default ${burgerConstructorStyles.ingredients__name}`}>{`${bun.name} (низ)`}</p>
+              <div className={burgerConstructorStyles.ingredients__main_list_inner__secondary_wrapper}>
+                <div className={burgerConstructorStyles.ingredients__main_list_price_wrapper}>
+                  <p className={`text text_type_digits-default ${burgerConstructorStyles.ingredients__main_list_price}`}>{bun.price}</p>
+                  <CurrencyIcon />
+                </div>
+                <LockIcon type="secondary" />
+              </div>
+            </div>
+          </li>
+        ) : (
+          <li className={`p-2 ${burgerConstructorStyles.ingredients__lower_bun}`} style={{ backgroundColor: isOver ? '#2ffdc8' : 'transparent' }}>
+            <div className={`${burgerConstructorStyles.ingredients__main_list_inner_wrapper} ${burgerConstructorStyles.empty_constructor_text}`}>
+              <p className={`text text_type_main-medium`}>Здесь могла бы быть ваша булочка</p>
+            </div>
+          </li>
+        )}
+      </ul>
+      <div className={burgerConstructorStyles.ingredients__final_price_container}>
+                <div className={burgerConstructorStyles.ingredients__final_price_wrapper}>
+                    <h2 className={`text text_type_digits-medium ${burgerConstructorStyles.ingredients__final_price_digit}`}>{adjustedTotalPrice}</h2>
+                    <CurrencyIcon />
+                </div>
+                <Button 
+          htmlType="button" 
+          type="primary" 
+          size="large" 
+          onClick={handleOrderDetailsOpen} 
+          disabled={isOrderDisabled}
+        >
+          Оформить заказ
+        </Button>
+            </div>
     </section>
   );
 }
+
+BurgerConstructor.propTypes = {
+  data: PropTypes.arrayOf(ingredientType).isRequired,
+  handleOrderDetailsOpen: PropTypes.func.isRequired,
+  handleIngredientDrop: PropTypes.func.isRequired,
+  handleReorder: PropTypes.func.isRequired,
+  handleRemove: PropTypes.func.isRequired,
+};
 
 export { BurgerConstructor };
