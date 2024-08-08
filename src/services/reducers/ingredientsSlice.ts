@@ -74,6 +74,13 @@ const ingredientsSlice = createSlice({
       const [movedIngredient] = state.constructorIngredients.splice(fromIndex, 1);
       state.constructorIngredients.splice(toIndex, 0, movedIngredient);
     },
+    resetOrderNumber(state) {
+      state.orderNumber = null;
+    },
+    clearConstructor(state) {
+      state.buns = [];
+      state.constructorIngredients = [];
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -100,9 +107,20 @@ const ingredientsSlice = createSlice({
       .addCase(createOrder.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || 'Ошибка при создании заказа';
+        ingredientsSlice.caseReducers.resetOrderNumber(state);
+        ingredientsSlice.caseReducers.clearConstructor(state);
       });
   },
 });
 
-export const { setViewedIngredient, setBun, addConstructorIngredient, removeConstructorIngredient, reorderConstructorIngredients } = ingredientsSlice.actions;
+export const { 
+  setViewedIngredient, 
+  setBun, 
+  addConstructorIngredient, 
+  removeConstructorIngredient, 
+  reorderConstructorIngredients, 
+  resetOrderNumber,
+  clearConstructor
+} = ingredientsSlice.actions;
+
 export default ingredientsSlice.reducer;

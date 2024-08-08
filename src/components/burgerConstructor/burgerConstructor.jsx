@@ -62,6 +62,8 @@ function BurgerConstructor({ data, handleOrderDetailsOpen, handleIngredientDrop,
   const mains = data.filter(item => item.type !== 'bun');
 
   const totalPrice = data.reduce((acc, item) => acc + item.price, 0);
+  const adjustedTotalPrice = bun ? totalPrice + bun.price : totalPrice;
+  const isOrderDisabled = totalPrice === 0 || !bun;
 
   return (
     <section className={burgerConstructorStyles.ingredients} ref={drop}>
@@ -132,12 +134,18 @@ function BurgerConstructor({ data, handleOrderDetailsOpen, handleIngredientDrop,
       </ul>
       <div className={burgerConstructorStyles.ingredients__final_price_container}>
                 <div className={burgerConstructorStyles.ingredients__final_price_wrapper}>
-                    <h2 className={`text text_type_digits-medium ${burgerConstructorStyles.ingredients__final_price_digit}`}>{totalPrice}</h2>
+                    <h2 className={`text text_type_digits-medium ${burgerConstructorStyles.ingredients__final_price_digit}`}>{adjustedTotalPrice}</h2>
                     <CurrencyIcon />
                 </div>
-                <Button htmlType="button" type="primary" size="large" onClick={handleOrderDetailsOpen}>
-                    Оформить заказ
-                </Button>
+                <Button 
+          htmlType="button" 
+          type="primary" 
+          size="large" 
+          onClick={handleOrderDetailsOpen} 
+          disabled={isOrderDisabled}
+        >
+          Оформить заказ
+        </Button>
             </div>
     </section>
   );

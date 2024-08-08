@@ -17,9 +17,11 @@ import {
   setBun,
   addConstructorIngredient,
   removeConstructorIngredient,
-  reorderConstructorIngredients
-} from '../../store/reducers/ingredientsSlice';
-import { RootState, AppDispatch } from '../../store/store';
+  reorderConstructorIngredients,
+  resetOrderNumber,
+  clearConstructor
+} from '../../services/reducers/ingredientsSlice';
+import { RootState, AppDispatch } from '../../services/store/store';
 
 function App() {
   const dispatch: AppDispatch = useDispatch();
@@ -47,7 +49,11 @@ function App() {
 
   const handleOrderDetailsOpen = () => {
     const ingredients = [...buns, ...constructorIngredients];
-    dispatch(createOrder(ingredients));
+    dispatch(createOrder(ingredients)).then((action) => {
+      if (createOrder.fulfilled.match(action)) {
+        dispatch(clearConstructor());
+      }
+    });
   };
 
   const handleIngredientDrop = (id: string) => {
@@ -97,7 +103,7 @@ function App() {
             </Modal>
           )}
           {orderNumber && (
-            <Modal isOpen={Boolean(orderNumber)} handleClose={() => dispatch(createOrder([]))}>
+            <Modal isOpen={Boolean(orderNumber)} handleClose={() => dispatch(resetOrderNumber())}>
               <OrderDetails orderNumber={orderNumber} />
             </Modal>
           )}
