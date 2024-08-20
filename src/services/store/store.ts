@@ -1,9 +1,23 @@
 import { configureStore } from '@reduxjs/toolkit';
 import rootReducer from './rootReducer';
+import { loadState, saveState } from '../../utils/localStorage';
+
+const preloadedState = loadState();
 
 const store = configureStore({
   reducer: rootReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
+  preloadedState,
   devTools: process.env.NODE_ENV !== 'production',
+});
+
+store.subscribe(() => {
+  saveState({
+    user: store.getState().user,
+  });
 });
 
 export type RootState = ReturnType<typeof store.getState>;

@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { BurgerIngredients } from '../../components/burgerIngredients/burgerIngredients';
 import { BurgerConstructor } from '../../components/burgerConstructor/burgerConstructor';
 import Modal from '../../components/modals/modal';
+import appStyles from '../../components/app/app.module.css'
 import IngredientDetails from '../../components/modals/ingredientModal/ingredientDetails';
 import OrderDetails from '../../components/modals/orderModal/orderDetails';
 import {
@@ -77,6 +78,8 @@ export const HomePage = () => {
       {error && <div>Ошибка: {error}</div>}
       {allIngredients.length > 0 && (
         <>
+          <main className={appStyles.main}>
+            <div className={appStyles.main__inner_content}>
               <BurgerIngredients
                 data={allIngredients}
                 handleIngredientDetailsOpen={handleIngredientDetailsOpen}
@@ -88,16 +91,18 @@ export const HomePage = () => {
                 handleRemove={handleRemove}
                 handleReorder={handleReorder}
               />
-          {viewedIngredient && (
-            <Modal isOpen={Boolean(viewedIngredient)} handleClose={handleIngredientDetailsClose}>
-              <IngredientDetails ingredient={viewedIngredient} />
-            </Modal>
-          )}
-          {orderNumber && (
-            <Modal isOpen={Boolean(orderNumber)} handleClose={() => dispatch(resetOrderNumber())}>
-              <OrderDetails orderNumber={orderNumber} />
-            </Modal>
-          )}
+              {viewedIngredient && (
+                <Modal isOpen={Boolean(viewedIngredient)} handleClose={handleIngredientDetailsClose}>
+                  <IngredientDetails ingredient={viewedIngredient} />
+                </Modal>
+              )}
+              {orderNumber && (
+                <Modal isOpen={Boolean(orderNumber)} handleClose={() => dispatch(resetOrderNumber())}>
+                  <OrderDetails orderNumber={orderNumber} />
+                </Modal>
+              )}
+            </div>
+          </main>
         </>
       )}
     </>

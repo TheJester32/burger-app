@@ -1,0 +1,38 @@
+.profile_content{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.profile_list{
+margin-top: 2rem;
+}
+
+.profile_list ul li{
+    list-style-type: none;
+    margin-bottom: 1rem;
+}
+
+.profile_list ul{
+    padding-left: 0;
+}
+
+.profile_list ul li a{
+    color: #fff;
+    text-decoration: none;
+}
+
+.profile_list ul li p{
+    color: #fff;
+    cursor: pointer;
+    margin: 0;
+}
+
+.profile_list ul li p:hover{
+    color: #2ffdc8;
+}
+
+
+.profile_list ul li a:hover{
+    color: #2ffdc8;
+}

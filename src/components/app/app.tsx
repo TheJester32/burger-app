@@ -5,21 +5,24 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Header } from '../header/appHeader';
 import { LoginPage } from '../../pages/login/login';
 import { HomePage } from '../../pages/home/home';
-import appStyles from './app.module.css';
+import { Register } from '../../pages/register/register';
+import { ForgotPassword } from '../../pages/forgotPassword/forgotPassword';
+import { ResetPassword } from '../../pages/resetPassword/resetPassword';
+import { Profile } from '../../pages/profile/profile';
 
 function App() {
   return (
     <DndProvider backend={HTML5Backend}>
       <Router>
         <Header />
-        <main className={appStyles.main}>
-          <div className={appStyles.main__inner_content}>
             <Routes>
               <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
+              <Route path="/profile" element={<Profile />} />
               <Route path="/" element={<HomePage />} />
             </Routes>
-          </div>
-        </main>
       </Router>
     </DndProvider>
   );

@@ -9,25 +9,25 @@ function Header() {
                 <div className={headerStyles.header__double_elements}>
                     <div className={`p-2 ${headerStyles.header__pair_elements}`}>
                         <BurgerIcon type="primary" />
-                        <p className={`text text_type_main-default ${headerStyles.header__icons_text}`} id={headerStyles.header__icons_text}>
+                        <a className={`text text_type_main-default ${headerStyles.header__icons_text}`} id={headerStyles.header__icons_text} href='/'>
                             Конструктор
-                        </p>
+                        </a>
                     </div>
                     <div className={`p-2 ${headerStyles.header__pair_elements}`}>
-                        <ListIcon type="secondary" />
-                        <p className={`text text_type_main-default ${headerStyles.header__icons_text_secondary}`} id={headerStyles.header__icons_text}>
+                        <ListIcon type="primary" />
+                        <a className={`text text_type_main-default ${headerStyles.header__icons_text_secondary}`} id={headerStyles.header__icons_text} href='/'>
                             Лента заказов
-                        </p>
+                        </a>
                     </div>
                 </div>
                 <div className={headerStyles.header__logo_wrapper}>
                     <Logo />
                 </div>
                 <div className={`p-2 ${headerStyles.header__pair_elements}`}>
-                    <ProfileIcon type="secondary" />
-                    <p className={`text text_type_main-default ${headerStyles.header__icons_text_secondary}`} id={headerStyles.header__icons_text}>
+                    <ProfileIcon type="primary" />
+                    <a className={`text text_type_main-default ${headerStyles.header__icons_text_secondary}`} id={headerStyles.header__icons_text} href='/profile'>
                         Личный кабинет
-                    </p>
+                    </a>
                 </div>
             </nav>
         </header>
