@@ -4,29 +4,23 @@ import { loginUser, resetError } from '../../services/reducers/userSlice';
 import { RootState } from '../../services/store/store';
 import formStyles from '../form.module.css';
 import { Button, Input, PasswordInput } from '@ya.praktikum/react-developer-burger-ui-components';
-import { useNavigate } from 'react-router-dom';
 
 function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const { isLoading, error, isAuthenticated } = useSelector((state: RootState) => state.user);
+
+  const { isLoading, error } = useSelector((state: RootState) => state.user);
 
   useEffect(() => {
     dispatch(resetError());
   }, [dispatch]);
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate('/');
-    }
-  }, [isAuthenticated, navigate]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    dispatch<any>(loginUser({ email, password }));
+    dispatch<any>(loginUser({ email, password }))
   };
 
   return (

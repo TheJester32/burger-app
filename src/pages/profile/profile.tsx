@@ -38,7 +38,6 @@ function Profile() {
 
   const handleLogout = async () => {
     const refreshToken = localStorage.getItem('refreshToken');
-    navigate('/');
     if (refreshToken) {
       try {
         const resultAction = await dispatch(logoutUser(refreshToken)).unwrap();
@@ -52,6 +51,7 @@ function Profile() {
         console.error('Ошибка выхода из системы:', error);
       }
     }
+    navigate('/login');
   };
 
   const handleProfileUpdate = (e: React.FormEvent<HTMLFormElement>) => {

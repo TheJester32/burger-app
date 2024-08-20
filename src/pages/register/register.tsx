@@ -23,7 +23,7 @@ function Register() {
   };
 
   return (
-    <div className={formStyles.wrapper}>
+    <div className={formStyles.wrapper} style={{marginTop: '3rem'}}>
       <form className={formStyles.form} onSubmit={handleSubmit}>
         <h1 className={`${formStyles.heading} text text_type_main-medium`}>Регистрация</h1>
         <Input
