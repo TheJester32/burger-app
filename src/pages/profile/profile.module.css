@@ -36,3 +36,11 @@ margin-top: 2rem;
 .profile_list ul li a:hover{
     color: #2ffdc8;
 }
+
+.text_color_error{
+    color: #DF2030;
+}
+
+.text_color_success{
+    color: greenyellow;
+}

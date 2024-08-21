@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import formStyles from '../form.module.css';
 import profileStyles from './profile.module.css';
-import { Input } from '@ya.praktikum/react-developer-burger-ui-components';
+import { Input, Button } from '@ya.praktikum/react-developer-burger-ui-components';
 import { logoutUser, updateUserProfile } from '../../services/reducers/userSlice';
 import { RootState } from '../../services/store/store';
 import { AppDispatch } from '../../services/store/store';
@@ -12,6 +12,11 @@ function Profile() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [initialName, setInitialName] = useState('');
+  const [initialEmail, setInitialEmail] = useState('');
+  const [message, setMessage] = useState<string | null>(null);
+  const [messageType, setMessageType] = useState<'success' | 'error'>('success');
+  const [isDirty, setIsDirty] = useState(false);
 
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
@@ -21,19 +26,24 @@ function Profile() {
     if (user) {
       setName(user.name || '');
       setEmail(user.email || '');
+      setInitialName(user.name || '');
+      setInitialEmail(user.email || '');
     }
   }, [user]);
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
+    setIsDirty(true);
   };
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
+    setIsDirty(true);
   };
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
+    setIsDirty(true);
   };
 
   const handleLogout = async () => {
@@ -54,9 +64,34 @@ function Profile() {
     navigate('/login');
   };
 
-  const handleProfileUpdate = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleProfileUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    dispatch(updateUserProfile({ name, email, password }));
+    if (name !== initialName || email !== initialEmail || password) {
+      try {
+        const resultAction = await dispatch(updateUserProfile({ name, email, password })).unwrap();
+        if (resultAction) {
+          setMessage('Данные были успешно изменены');
+          setMessageType('success');
+        }
+      } catch (error) {
+        setMessage('Не получается обновить данные');
+        setMessageType('error');
+      }
+    }
+    const timer = setTimeout(() => {
+      setIsDirty(false);
+      setMessage(null);
+      
+    }, 2000);
+    return () => clearTimeout(timer);
+  };
+
+  const handleCancel = () => {
+    setName(initialName);
+    setEmail(initialEmail);
+    setPassword('');
+    setMessage(null);
+    setIsDirty(false);
   };
 
   return (
@@ -107,6 +142,21 @@ function Profile() {
             icon={'EditIcon'}
             extraClass={formStyles.input}
             onChange={handlePasswordChange} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}          />
+          <div className={formStyles.buttons}>
+            {isDirty && (
+              <>
+                {message && (
+                  <p className={`text text_type_main-small p-2 ${messageType === 'success' ? 'text_color_success' : 'text_color_error'}`}
+                    style={{ marginBottom: '1rem' }}
+                  >
+                    {message}
+                  </p>
+                )}
+                <Button type="primary" size="medium" htmlType="submit">Сохранить</Button>
+                <Button type="secondary" size="medium" htmlType="button" onClick={handleCancel}>Отмена</Button>
+              </>
+            )}
+          </div>
         </form>
       </div>
     </div>

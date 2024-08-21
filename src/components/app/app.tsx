@@ -9,8 +9,7 @@ import { Register } from '../../pages/register/register';
 import { ForgotPassword } from '../../pages/forgotPassword/forgotPassword';
 import { ResetPassword } from '../../pages/resetPassword/resetPassword';
 import { Profile } from '../../pages/profile/profile';
-import { ProtectedRouteElement } from '../routes/ProtectedRouteElement';
-import { UnprotectedRouteElement } from '../routes/UnprotectedRouteElement';
+import { RouteGuard } from '../routes/ProtectedRouteElement';
 
 function App() {
   return (
@@ -19,15 +18,15 @@ function App() {
         <Header />
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={<UnprotectedRouteElement element={<LoginPage />} />} />
-          <Route path="/register" element={<UnprotectedRouteElement element={<Register />} />} />
-          <Route path="/forgot-password" element={<UnprotectedRouteElement element={<ForgotPassword />} />} />
+          <Route path="/login" element={<RouteGuard element={<LoginPage />} isProtected={false} />} />
+          <Route path="/register" element={<RouteGuard element={<Register />} isProtected={false} />} />
+          <Route path="/forgot-password" element={<RouteGuard element={<ForgotPassword />} isProtected={false} />} />
           <Route path="/reset-password" element={
             sessionStorage.getItem('forgotPasswordInitiated') === 'true' 
-              ? <UnprotectedRouteElement element={<ResetPassword />} />
+              ? <RouteGuard element={<ResetPassword />} isProtected={false} />
               : <Navigate to="/forgot-password" replace />
           } />
-          <Route path="/profile" element={<ProtectedRouteElement element={<Profile />} />} />
+          <Route path="/profile" element={<RouteGuard element={<Profile />} isProtected={true} />} />
         </Routes>
       </Router>
     </DndProvider>

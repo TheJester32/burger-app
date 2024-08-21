@@ -3,19 +3,25 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../services/store/store';
 
-interface ProtectedRouteElementProps {
+interface RouteGuardProps {
   element: React.ReactElement;
+  isProtected: boolean;
 }
 
-const ProtectedRouteElement: React.FC<ProtectedRouteElementProps> = ({ element }) => {
+const RouteGuard: React.FC<RouteGuardProps> = ({ element, isProtected }) => {
   const { isAuthenticated } = useSelector((state: RootState) => state.user);
   const location = useLocation();
 
-  return isAuthenticated ? (
-    element
-  ) : (
-    <Navigate to="/login" replace state={{ from: location }} />
-  );
+  if (isProtected && !isAuthenticated) {
+    return <Navigate to="/login" replace state={{ from: location }} />;
+  }
+
+  if (!isProtected && isAuthenticated) {
+    const redirectPath = location.state?.from?.pathname || "/";
+    return <Navigate to={redirectPath} replace />;
+  }
+
+  return element;
 };
 
-export { ProtectedRouteElement };
+export { RouteGuard };
