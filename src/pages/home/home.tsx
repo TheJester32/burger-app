@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { BurgerIngredients } from '../../components/burgerIngredients/burgerIngredients';
 import { BurgerConstructor } from '../../components/burgerConstructor/burgerConstructor';
 import Modal from '../../components/modals/modal';
-import appStyles from '../../components/app/app.module.css'
+import appStyles from '../../components/app/app.module.css';
 import IngredientDetails from '../../components/modals/ingredientModal/ingredientDetails';
 import OrderDetails from '../../components/modals/orderModal/orderDetails';
 import {
@@ -19,6 +19,7 @@ import {
 } from '../../services/reducers/ingredientsSlice';
 import { RootState, AppDispatch } from '../../services/store/store';
 import { ingredientType } from '../../utils/tsTypes';
+import { useNavigate } from 'react-router-dom';
 
 export const HomePage = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -32,16 +33,24 @@ export const HomePage = () => {
     error
   } = useSelector((state: RootState) => state.ingredients);
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     dispatch(fetchIngredients());
   }, [dispatch]);
 
   const handleIngredientDetailsOpen = (ingredient: ingredientType | null) => {
-    dispatch(setViewedIngredient(ingredient));
+    if (ingredient) {
+      dispatch(setViewedIngredient(ingredient));
+      navigate(`/ingredients/${ingredient._id}`, { state: { modal: true } });
+    } else {
+      console.error('Ingredient is undefined');
+    }
   };
 
   const handleIngredientDetailsClose = () => {
     dispatch(setViewedIngredient(null));
+    navigate('/');
   };
 
   const handleOrderDetailsOpen = () => {
@@ -72,6 +81,8 @@ export const HomePage = () => {
     dispatch(reorderConstructorIngredients({ fromIndex, toIndex }));
   };
 
+  const { isAuthentficated } = useSelector((state: RootState) => state.user);
+
   return (
     <>
       {loading && <div>Загрузка...</div>}
@@ -90,6 +101,7 @@ export const HomePage = () => {
                 handleIngredientDrop={handleIngredientDrop}
                 handleRemove={handleRemove}
                 handleReorder={handleReorder}
+                isAuthentficated={isAuthentficated}
               />
               {viewedIngredient && (
                 <Modal isOpen={Boolean(viewedIngredient)} handleClose={handleIngredientDetailsClose}>

@@ -13,7 +13,7 @@ interface UserState {
   accessToken: string | null;
   refreshToken: string | null;
   isLoading: boolean;
-  isAuthenticated: boolean;
+  isAuthentficated: boolean;
   error: string | null;
 }
 
@@ -25,7 +25,7 @@ const initialState: UserState = {
   accessToken: null,
   refreshToken: null,
   isLoading: false,
-  isAuthenticated: false,
+  isAuthentficated: false,
   error: null,
   updateStatus: 'idle'
 };
@@ -112,6 +112,10 @@ export const logoutUser = createAsyncThunk<{ success: boolean; message: string }
         throw new Error('Ошибка выхода из системы');
       }
       const result = await response.json();
+      if (result.success) {
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+      }
       return { success: result.success, message: result.message };
     } catch (error) {
       if (error instanceof Error) {
@@ -216,7 +220,7 @@ const userSlice = createSlice({
         state.user = action.payload.user;
         state.accessToken = action.payload.accessToken;
         state.refreshToken = action.payload.refreshToken;
-        state.isAuthenticated = true;
+        state.isAuthentficated = true;
       })
       .addCase(registerUser.rejected, (state, action: PayloadAction<string | undefined>) => {
         state.isLoading = false;
@@ -231,7 +235,7 @@ const userSlice = createSlice({
         state.user = action.payload.user;
         state.accessToken = action.payload.accessToken;
         state.refreshToken = action.payload.refreshToken;
-        state.isAuthenticated = true;
+        state.isAuthentficated = true;
       })
       .addCase(loginUser.rejected, (state, action: PayloadAction<string | undefined>) => {
         state.isLoading = false;
@@ -254,7 +258,7 @@ const userSlice = createSlice({
           state.user = { email: null, name: null, success: false };
           state.accessToken = null;
           state.refreshToken = null;
-          state.isAuthenticated = false;
+          state.isAuthentficated = false;
         }
       })
       .addCase(updateUserProfile.pending, (state) => {

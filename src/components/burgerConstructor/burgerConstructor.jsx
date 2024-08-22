@@ -4,6 +4,8 @@ import { CurrencyIcon, LockIcon, DragIcon, DeleteIcon, Button } from '@ya.prakti
 import burgerConstructorStyles from './burgerConstructor.module.css';
 import PropTypes from 'prop-types';
 import { ingredientType } from '../../utils/types';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 const IngredientItem = ({ item, index, moveIngredient, handleRemove }) => {
   const ref = React.useRef(null);
@@ -56,6 +58,15 @@ function BurgerConstructor({ data, handleOrderDetailsOpen, handleIngredientDrop,
 
   const moveIngredient = (fromIndex, toIndex) => {
     handleReorder(fromIndex, toIndex);
+  };
+
+  const { isAuthentficated } = useSelector((state) => state.user);
+  const navigate = useNavigate();
+
+  const handleRedirectToLogin = () => {
+    if (!isAuthentficated) {
+      navigate('/login');
+    }
   };
 
   const bun = data.find(item => item.type === 'bun');
@@ -133,20 +144,25 @@ function BurgerConstructor({ data, handleOrderDetailsOpen, handleIngredientDrop,
         )}
       </ul>
       <div className={burgerConstructorStyles.ingredients__final_price_container}>
-                <div className={burgerConstructorStyles.ingredients__final_price_wrapper}>
-                    <h2 className={`text text_type_digits-medium ${burgerConstructorStyles.ingredients__final_price_digit}`}>{adjustedTotalPrice}</h2>
-                    <CurrencyIcon />
-                </div>
-                <Button 
-          htmlType="button" 
-          type="primary" 
-          size="large" 
-          onClick={handleOrderDetailsOpen} 
+        <div className={burgerConstructorStyles.ingredients__final_price_wrapper}>
+          <h2 className={`text text_type_digits-medium ${burgerConstructorStyles.ingredients__final_price_digit}`}>{adjustedTotalPrice}</h2>
+          <CurrencyIcon />
+        </div>
+        <Button
+          htmlType="button"
+          type="primary"
+          size="large"
+          onClick={() => {
+            isAuthentficated ? 
+            handleOrderDetailsOpen()
+            :
+            handleRedirectToLogin();
+          }}
           disabled={isOrderDisabled}
         >
           Оформить заказ
         </Button>
-            </div>
+      </div>
     </section>
   );
 }
@@ -157,6 +173,7 @@ BurgerConstructor.propTypes = {
   handleIngredientDrop: PropTypes.func.isRequired,
   handleReorder: PropTypes.func.isRequired,
   handleRemove: PropTypes.func.isRequired,
+  isAuthentficated: PropTypes.bool.isRequired,
 };
 
 export { BurgerConstructor };

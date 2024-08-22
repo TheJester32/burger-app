@@ -9,16 +9,16 @@ interface RouteGuardProps {
 }
 
 const RouteGuard: React.FC<RouteGuardProps> = ({ element, isProtected }) => {
-  const { isAuthenticated } = useSelector((state: RootState) => state.user);
+  const { isAuthentficated } = useSelector((state: RootState) => state.user);
   const location = useLocation();
+  const from = location.state?.from?.pathname || "/";
 
-  if (isProtected && !isAuthenticated) {
+  if (isProtected && !isAuthentficated) {
     return <Navigate to="/login" replace state={{ from: location }} />;
   }
 
-  if (!isProtected && isAuthenticated) {
-    const redirectPath = location.state?.from?.pathname || "/";
-    return <Navigate to={redirectPath} replace />;
+  if (!isProtected && isAuthentficated) {
+    return <Navigate to={from} replace />;
   }
 
   return element;

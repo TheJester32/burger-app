@@ -1,10 +1,24 @@
 import React from 'react';
 import { Logo, BurgerIcon, ListIcon, ProfileIcon } from '@ya.praktikum/react-developer-burger-ui-components';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import headerStyles from './header.module.css';
+import PropTypes from 'prop-types';
 
-function Header() {
+function Header({isAuthentficated}) {
     const location = useLocation();
+    const navigate = useNavigate();
+    
+    Header.propTypes = {
+        isAuthentficated: PropTypes.bool.isRequired,
+      };
+
+    const handleProfileClick = () => {
+        if (!isAuthentficated) {
+            navigate('/login', { state: { from: location } });
+        } else {
+            navigate('/profile');
+        }
+    };
 
     return (
         <header className={headerStyles.header}>
@@ -36,7 +50,7 @@ function Header() {
                 <div className={headerStyles.header__logo_wrapper}>
                     <Logo />
                 </div>
-                <div className={`p-2 ${headerStyles.header__pair_elements}`}>
+                <div className={`p-2 ${headerStyles.header__pair_elements}`} onClick={handleProfileClick}>
                     <ProfileIcon type={location.pathname.startsWith('/profile') ? 'primary' : 'secondary'} />
                     <NavLink 
                         to="/profile" 
