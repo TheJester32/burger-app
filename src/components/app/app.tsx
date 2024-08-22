@@ -10,7 +10,7 @@ import { ForgotPassword } from '../../pages/forgotPassword/forgotPassword';
 import { ResetPassword } from '../../pages/resetPassword/resetPassword';
 import { Profile } from '../../pages/profile/profile';
 import { IngredientPage } from '../../pages/ingredient/ingredient';
-import { RouteGuard } from '../routes/ProtectedRouteElement';
+import { RouteGuard } from '../routes/protectedRouteElement';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../services/store/store';
 
