@@ -19,7 +19,7 @@ import {
 } from '../../services/reducers/ingredientsSlice';
 import { RootState, AppDispatch } from '../../services/store/store';
 import { ingredientType } from '../../utils/tsTypes';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 export const HomePage = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -34,6 +34,7 @@ export const HomePage = () => {
   } = useSelector((state: RootState) => state.ingredients);
 
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     dispatch(fetchIngredients());
@@ -41,15 +42,34 @@ export const HomePage = () => {
 
   const handleIngredientDetailsOpen = (ingredient: ingredientType | null) => {
     if (ingredient) {
-      dispatch(setViewedIngredient(ingredient));
-      navigate(`/ingredients/${ingredient._id}`, { state: { modal: true } });
+      const ingredientPath = `/ingredients/${ingredient._id}`;
+  
+      localStorage.setItem('viewedIngredient', JSON.stringify(ingredient));
+  
+      if (location.pathname === ingredientPath) {
+        dispatch(setViewedIngredient(ingredient));
+      } else {
+        dispatch(setViewedIngredient(ingredient));
+        navigate(ingredientPath, { state: { modal: true } });
+      }
     } else {
       console.error('Ingredient is undefined');
     }
   };
 
+  useEffect(() => {
+    const savedIngredient = localStorage.getItem('viewedIngredient');
+  
+    if (savedIngredient) {
+      const ingredient = JSON.parse(savedIngredient) as ingredientType;
+      dispatch(setViewedIngredient(ingredient));
+      navigate(`/ingredients/${ingredient._id}`, { state: { modal: true } });
+    }
+  }, [dispatch, navigate]);
+
   const handleIngredientDetailsClose = () => {
     dispatch(setViewedIngredient(null));
+    localStorage.removeItem('viewedIngredient');
     navigate('/');
   };
 

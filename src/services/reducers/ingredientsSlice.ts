@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { v4 as uuidv4 } from 'uuid';
 import { ingredientType } from '../../utils/tsTypes';
+import { BASE_URL } from '../../utils/api';
 
 interface IngredientsState {
   allIngredients: ingredientType[];
@@ -25,7 +26,7 @@ const initialState: IngredientsState = {
 };
 
 export const fetchIngredients = createAsyncThunk('ingredients/fetchIngredients', async () => {
-  const response = await fetch('https://norma.nomoreparties.space/api/ingredients');
+  const response = await fetch(`${BASE_URL}/ingredients`);
   if (!response.ok) {
     throw new Error('Сервер не отвечает');
   }
@@ -33,20 +34,32 @@ export const fetchIngredients = createAsyncThunk('ingredients/fetchIngredients',
   return data.data;
 });
 
-export const createOrder = createAsyncThunk('ingredients/createOrder', async (ingredients: ingredientType[]) => {
-  const response = await fetch('https://norma.nomoreparties.space/api/orders', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ ingredients }),
-  });
-  if (!response.ok) {
-    throw new Error('Не удалось создать заказ');
+export const createOrder = createAsyncThunk<number, ingredientType[]>(
+  'ingredients/createOrder',
+  async (ingredients, thunkAPI) => {
+    try {
+      const response = await fetch(`${BASE_URL}/orders`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ingredients }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Не удалось создать заказ');
+      }
+
+      const data = await response.json();
+      return data.order.number;
+    } catch (error) {
+      if (error instanceof Error) {
+        return thunkAPI.rejectWithValue(error.message);
+      }
+      return thunkAPI.rejectWithValue('Неизвестная ошибка');
+    }
   }
-  const data = await response.json();
-  return data.order.number;
-});
+);
 
 const ingredientsSlice = createSlice({
   name: 'ingredients',

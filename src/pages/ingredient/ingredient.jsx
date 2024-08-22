@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchIngredients } from '../../services/reducers/ingredientsSlice';
 import IngredientDetails from '../../components/modals/ingredientModal/ingredientDetails';
@@ -7,6 +7,7 @@ import IngredientDetails from '../../components/modals/ingredientModal/ingredien
 function IngredientPage() {
   const { id } = useParams();
   const dispatch = useDispatch();
+  const location = useLocation();
   const { allIngredients, loading, error } = useSelector(state => state.ingredients);
 
   useEffect(() => {
@@ -14,6 +15,12 @@ function IngredientPage() {
       dispatch(fetchIngredients());
     }
   }, [dispatch, allIngredients.length]);
+
+  useEffect(() => {
+    if (!location.state?.modal) {
+      localStorage.removeItem('viewedIngredient');
+    }
+  }, [location.state]);
 
   const ingredient = allIngredients.find(item => item._id === id);
 

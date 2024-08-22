@@ -1,10 +1,11 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../store/store';
+import { BASE_URL } from '../../utils/api';
 
 interface User {
   email: string | null;
   name: string | null;
-  success: boolean
+  success: boolean;
 }
 
 interface UserState {
@@ -19,22 +20,23 @@ interface UserState {
 
 const initialState: UserState = {
   user: {
-    email: null, name: null,
-    success: false
+    email: null,
+    name: null,
+    success: false,
   },
   accessToken: null,
   refreshToken: null,
   isLoading: false,
   isAuthentficated: false,
   error: null,
-  updateStatus: 'idle'
+  updateStatus: 'idle',
 };
 
 export const registerUser = createAsyncThunk<UserState, { email: string; password: string; name: string }, { rejectValue: string }>(
   'user/registerUser',
   async (userData, thunkAPI) => {
     try {
-      const response = await fetch('https://norma.nomoreparties.space/api/auth/register', {
+      const response = await fetch(`${BASE_URL}/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(userData),
@@ -56,7 +58,7 @@ export const loginUser = createAsyncThunk<UserState, { email: string; password: 
   'user/loginUser',
   async (credentials, thunkAPI) => {
     try {
-      const response = await fetch('https://norma.nomoreparties.space/api/auth/login', {
+      const response = await fetch(`${BASE_URL}/auth/login`, {  
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(credentials),
@@ -81,7 +83,7 @@ export const refreshToken = createAsyncThunk<UserState, string, { rejectValue: s
   'user/refreshToken',
   async (refreshToken, thunkAPI) => {
     try {
-      const response = await fetch('https://norma.nomoreparties.space/api/auth/token', {
+      const response = await fetch(`${BASE_URL}/auth/token`, {  
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token: refreshToken }),
@@ -103,7 +105,7 @@ export const logoutUser = createAsyncThunk<{ success: boolean; message: string }
   'user/logoutUser',
   async (refreshToken, thunkAPI) => {
     try {
-      const response = await fetch('https://norma.nomoreparties.space/api/auth/logout', {
+      const response = await fetch(`${BASE_URL}/auth/logout`, {  
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token: refreshToken }),
@@ -135,7 +137,7 @@ export const fetchUserProfile = createAsyncThunk<User, void, { rejectValue: stri
       if (!accessToken) {
         throw new Error('Токен доступа отсутствует');
       }
-      const response = await fetch('https://norma.nomoreparties.space/api/auth/user', {
+      const response = await fetch(`${BASE_URL}/auth/user`, {  
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -168,18 +170,18 @@ export const updateUserProfile = createAsyncThunk<User, { name: string; email: s
       }
       const bodyData: { name: string; email: string; password?: string } = {
         name: userData.name,
-        email: userData.email
+        email: userData.email,
       };
 
       if (userData.password) {
         bodyData.password = userData.password;
       }
 
-      const response = await fetch('https://norma.nomoreparties.space/api/auth/user', {
+      const response = await fetch(`${BASE_URL}/auth/user`, {  
         method: 'PATCH',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
-          'Authorization': `${accessToken}`,
+          'Authorization': `Bearer ${accessToken}`,
         },
         body: JSON.stringify(bodyData),
       });
