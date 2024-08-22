@@ -1,11 +1,11 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../store/store';
-import { BASE_URL } from '../../utils/api';
+import { BASE_URL, checkResponse } from '../../utils/api';
 
 interface User {
   email: string | null;
   name: string | null;
-  success: boolean;
+  success: boolean
 }
 
 interface UserState {
@@ -20,31 +20,28 @@ interface UserState {
 
 const initialState: UserState = {
   user: {
-    email: null,
-    name: null,
-    success: false,
+    email: null, name: null,
+    success: false
   },
   accessToken: null,
   refreshToken: null,
   isLoading: false,
   isAuthentficated: false,
   error: null,
-  updateStatus: 'idle',
+  updateStatus: 'idle'
 };
 
 export const registerUser = createAsyncThunk<UserState, { email: string; password: string; name: string }, { rejectValue: string }>(
   'user/registerUser',
   async (userData, thunkAPI) => {
     try {
-      const response = await fetch(`${BASE_URL}/auth/register`, {
+      const response = await fetch(`${BASE_URL}auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(userData),
       });
-      if (!response.ok) {
-        throw new Error('Ошибка регистрации');
-      }
-      return await response.json();
+      const data = await checkResponse(response);
+      return data;
     } catch (error) {
       if (error instanceof Error) {
         return thunkAPI.rejectWithValue(error.message);
@@ -58,15 +55,12 @@ export const loginUser = createAsyncThunk<UserState, { email: string; password: 
   'user/loginUser',
   async (credentials, thunkAPI) => {
     try {
-      const response = await fetch(`${BASE_URL}/auth/login`, {  
+      const response = await fetch(`${BASE_URL}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(credentials),
       });
-      if (!response.ok) {
-        throw new Error('Ошибка авторизации');
-      }
-      const data = await response.json();
+      const data = await checkResponse(response);
       localStorage.setItem('accessToken', data.accessToken);
       localStorage.setItem('refreshToken', data.refreshToken);
       return data;
@@ -83,15 +77,13 @@ export const refreshToken = createAsyncThunk<UserState, string, { rejectValue: s
   'user/refreshToken',
   async (refreshToken, thunkAPI) => {
     try {
-      const response = await fetch(`${BASE_URL}/auth/token`, {  
+      const response = await fetch(`${BASE_URL}/auth/token`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token: refreshToken }),
       });
-      if (!response.ok) {
-        throw new Error('Ошибка обновления токена');
-      }
-      return await response.json();
+      const data = await checkResponse(response);
+      return data;
     } catch (error) {
       if (error instanceof Error) {
         return thunkAPI.rejectWithValue(error.message);
@@ -105,15 +97,12 @@ export const logoutUser = createAsyncThunk<{ success: boolean; message: string }
   'user/logoutUser',
   async (refreshToken, thunkAPI) => {
     try {
-      const response = await fetch(`${BASE_URL}/auth/logout`, {  
+      const response = await fetch(`${BASE_URL}/auth/logout`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token: refreshToken }),
       });
-      if (!response.ok) {
-        throw new Error('Ошибка выхода из системы');
-      }
-      const result = await response.json();
+      const result = await checkResponse(response);
       if (result.success) {
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
@@ -137,17 +126,14 @@ export const fetchUserProfile = createAsyncThunk<User, void, { rejectValue: stri
       if (!accessToken) {
         throw new Error('Токен доступа отсутствует');
       }
-      const response = await fetch(`${BASE_URL}/auth/user`, {  
+      const response = await fetch(`${BASE_URL}/auth/user`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${accessToken}`,
         },
       });
-      if (!response.ok) {
-        throw new Error('Ошибка получения данных профиля');
-      }
-      const data = await response.json();
+      const data = await checkResponse(response);
       return data.user;
     } catch (error) {
       if (error instanceof Error) {
@@ -170,29 +156,22 @@ export const updateUserProfile = createAsyncThunk<User, { name: string; email: s
       }
       const bodyData: { name: string; email: string; password?: string } = {
         name: userData.name,
-        email: userData.email,
+        email: userData.email
       };
 
       if (userData.password) {
         bodyData.password = userData.password;
       }
 
-      const response = await fetch(`${BASE_URL}/auth/user`, {  
+      const response = await fetch(`${BASE_URL}/auth/user`, {
         method: 'PATCH',
-        headers: {
+        headers: { 
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`,
+          'Authorization': `${accessToken}`,
         },
         body: JSON.stringify(bodyData),
       });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error('Ошибка обновления профиля:', errorData);
-        throw new Error(errorData.message || 'Ошибка обновления профиля');
-      }
-
-      const data = await response.json();
+      const data = await checkResponse(response);
       return data.user;
     } catch (error) {
       if (error instanceof Error) {

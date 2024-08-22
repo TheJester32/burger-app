@@ -20,6 +20,7 @@ import {
 import { RootState, AppDispatch } from '../../services/store/store';
 import { ingredientType } from '../../utils/tsTypes';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
 
 export const HomePage = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -85,10 +86,11 @@ export const HomePage = () => {
   const handleIngredientDrop = (id: string) => {
     const ingredient = allIngredients.find(ing => ing._id === id);
     if (ingredient) {
+      const ingredientWithUUID = { ...ingredient, uuid: uuidv4() };
       if (ingredient.type === 'bun') {
-        dispatch(setBun(ingredient));
+        dispatch(setBun(ingredientWithUUID));
       } else {
-        dispatch(addConstructorIngredient(ingredient));
+        dispatch(addConstructorIngredient(ingredientWithUUID));
       }
     }
   };

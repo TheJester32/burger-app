@@ -1,7 +1,6 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
-import { v4 as uuidv4 } from 'uuid';
 import { ingredientType } from '../../utils/tsTypes';
-import { BASE_URL } from '../../utils/api';
+import { BASE_URL, checkResponse } from '../../utils/api';
 
 interface IngredientsState {
   allIngredients: ingredientType[];
@@ -27,10 +26,7 @@ const initialState: IngredientsState = {
 
 export const fetchIngredients = createAsyncThunk('ingredients/fetchIngredients', async () => {
   const response = await fetch(`${BASE_URL}/ingredients`);
-  if (!response.ok) {
-    throw new Error('Сервер не отвечает');
-  }
-  const data = await response.json();
+  const data = await checkResponse(response);
   return data.data;
 });
 
@@ -46,11 +42,7 @@ export const createOrder = createAsyncThunk<number, ingredientType[]>(
         body: JSON.stringify({ ingredients }),
       });
 
-      if (!response.ok) {
-        throw new Error('Не удалось создать заказ');
-      }
-
-      const data = await response.json();
+      const data = await checkResponse(response);
       return data.order.number;
     } catch (error) {
       if (error instanceof Error) {
@@ -68,13 +60,11 @@ const ingredientsSlice = createSlice({
     setViewedIngredient(state, action: PayloadAction<ingredientType | null>) {
       state.viewedIngredient = action.payload;
     },
-    setBun(state, action: PayloadAction<ingredientType>) {
-      const bunWithUUID = { ...action.payload, uuid: uuidv4() };
-      state.buns = [bunWithUUID];
+    setBun(state, action: PayloadAction<ingredientType & { uuid: string }>) {
+      state.buns = [action.payload];
     },
-    addConstructorIngredient(state, action: PayloadAction<ingredientType>) {
-      const ingredientWithUUID = { ...action.payload, uuid: uuidv4() };
-      state.constructorIngredients.push(ingredientWithUUID);
+    addConstructorIngredient(state, action: PayloadAction<ingredientType & { uuid: string }>) {
+      state.constructorIngredients.push(action.payload);
     },
     removeConstructorIngredient(state, action: PayloadAction<string>) {
       const index = state.constructorIngredients.findIndex(ingredient => ingredient.uuid === action.payload);
