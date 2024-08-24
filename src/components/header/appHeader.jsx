@@ -1,33 +1,65 @@
 import React from 'react';
 import { Logo, BurgerIcon, ListIcon, ProfileIcon } from '@ya.praktikum/react-developer-burger-ui-components';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import headerStyles from './header.module.css';
+import PropTypes from 'prop-types';
 
-function Header() {
+function Header({isAuthentficated}) {
+    const location = useLocation();
+    const navigate = useNavigate();
+    
+    Header.propTypes = {
+        isAuthentficated: PropTypes.bool.isRequired,
+      };
+
+    const handleProfileClick = () => {
+        if (!isAuthentficated) {
+            navigate('/login', { state: { from: location } });
+        } else {
+            navigate('/profile');
+        }
+    };
+
     return (
         <header className={headerStyles.header}>
             <nav className={headerStyles.header__navigation}>
                 <div className={headerStyles.header__double_elements}>
                     <div className={`p-2 ${headerStyles.header__pair_elements}`}>
-                        <BurgerIcon type="primary" />
-                        <p className={`text text_type_main-default ${headerStyles.header__icons_text}`} id={headerStyles.header__icons_text}>
+                        <BurgerIcon type={location.pathname === '/' ? 'primary' : 'secondary'} />
+                        <NavLink 
+                            to="/" 
+                            className={({ isActive }) =>
+                                `text text_type_main-default header__icons_text ${isActive ? headerStyles.header__icons_text_active : headerStyles.header__icons_text}`
+                            }
+                        >
                             Конструктор
-                        </p>
+                        </NavLink>
                     </div>
                     <div className={`p-2 ${headerStyles.header__pair_elements}`}>
-                        <ListIcon type="secondary" />
-                        <p className={`text text_type_main-default ${headerStyles.header__icons_text_secondary}`} id={headerStyles.header__icons_text}>
+                        <ListIcon type={location.pathname === '/orders' ? 'primary' : 'secondary'} />
+                        <NavLink 
+                            to="/orders" 
+                            className={({ isActive }) =>
+                                `text text_type_main-default header__icons_text ${isActive ? headerStyles.header__icons_text_active : headerStyles.header__icons_text}`
+                            }
+                        >
                             Лента заказов
-                        </p>
+                        </NavLink>
                     </div>
                 </div>
                 <div className={headerStyles.header__logo_wrapper}>
                     <Logo />
                 </div>
-                <div className={`p-2 ${headerStyles.header__pair_elements}`}>
-                    <ProfileIcon type="secondary" />
-                    <p className={`text text_type_main-default ${headerStyles.header__icons_text_secondary}`} id={headerStyles.header__icons_text}>
+                <div className={`p-2 ${headerStyles.header__pair_elements}`} onClick={handleProfileClick}>
+                    <ProfileIcon type={location.pathname.startsWith('/profile') ? 'primary' : 'secondary'} />
+                    <NavLink 
+                        to="/profile" 
+                        className={({ isActive }) =>
+                            `text text_type_main-default header__icons_text ${isActive ? headerStyles.header__icons_text_active : headerStyles.header__icons_text}`
+                        }
+                    >
                         Личный кабинет
-                    </p>
+                    </NavLink>
                 </div>
             </nav>
         </header>

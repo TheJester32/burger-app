@@ -2,6 +2,10 @@ import React from 'react';
 import ingredientDetailsStyles from './ingredientDetails.module.css';
 
 function IngredientDetails({ ingredient }) {
+  if (!ingredient) {
+    return <p>Ингредиент не найден</p>;
+  }
+
   return (
     <div className={`${ingredientDetailsStyles.constructor__modal_wrapper}`}>
       <h3 className='text text_type_main-large'>Детали ингредиента</h3>

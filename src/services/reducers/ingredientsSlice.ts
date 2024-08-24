@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
-import { v4 as uuidv4 } from 'uuid';
 import { ingredientType } from '../../utils/tsTypes';
+import { BASE_URL, checkResponse } from '../../utils/api';
 
 interface IngredientsState {
   allIngredients: ingredientType[];
@@ -25,28 +25,33 @@ const initialState: IngredientsState = {
 };
 
 export const fetchIngredients = createAsyncThunk('ingredients/fetchIngredients', async () => {
-  const response = await fetch('https://norma.nomoreparties.space/api/ingredients');
-  if (!response.ok) {
-    throw new Error('Сервер не отвечает');
-  }
-  const data = await response.json();
+  const response = await fetch(`${BASE_URL}/ingredients`);
+  const data = await checkResponse(response);
   return data.data;
 });
 
-export const createOrder = createAsyncThunk('ingredients/createOrder', async (ingredients: ingredientType[]) => {
-  const response = await fetch('https://norma.nomoreparties.space/api/orders', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ ingredients }),
-  });
-  if (!response.ok) {
-    throw new Error('Не удалось создать заказ');
+export const createOrder = createAsyncThunk<number, ingredientType[]>(
+  'ingredients/createOrder',
+  async (ingredients, thunkAPI) => {
+    try {
+      const response = await fetch(`${BASE_URL}/orders`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ingredients }),
+      });
+
+      const data = await checkResponse(response);
+      return data.order.number;
+    } catch (error) {
+      if (error instanceof Error) {
+        return thunkAPI.rejectWithValue(error.message);
+      }
+      return thunkAPI.rejectWithValue('Неизвестная ошибка');
+    }
   }
-  const data = await response.json();
-  return data.order.number;
-});
+);
 
 const ingredientsSlice = createSlice({
   name: 'ingredients',
@@ -55,13 +60,11 @@ const ingredientsSlice = createSlice({
     setViewedIngredient(state, action: PayloadAction<ingredientType | null>) {
       state.viewedIngredient = action.payload;
     },
-    setBun(state, action: PayloadAction<ingredientType>) {
-      const bunWithUUID = { ...action.payload, uuid: uuidv4() };
-      state.buns = [bunWithUUID];
+    setBun(state, action: PayloadAction<ingredientType & { uuid: string }>) {
+      state.buns = [action.payload];
     },
-    addConstructorIngredient(state, action: PayloadAction<ingredientType>) {
-      const ingredientWithUUID = { ...action.payload, uuid: uuidv4() };
-      state.constructorIngredients.push(ingredientWithUUID);
+    addConstructorIngredient(state, action: PayloadAction<ingredientType & { uuid: string }>) {
+      state.constructorIngredients.push(action.payload);
     },
     removeConstructorIngredient(state, action: PayloadAction<string>) {
       const index = state.constructorIngredients.findIndex(ingredient => ingredient.uuid === action.payload);
