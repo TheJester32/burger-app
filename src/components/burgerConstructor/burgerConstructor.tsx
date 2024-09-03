@@ -1,18 +1,25 @@
-import React from 'react';
-import { useDrop, useDrag } from 'react-dnd';
+import React, { useRef } from 'react';
+import { useDrop, useDrag, DropTargetMonitor } from 'react-dnd';
 import { CurrencyIcon, LockIcon, DragIcon, DeleteIcon, Button } from '@ya.praktikum/react-developer-burger-ui-components';
 import burgerConstructorStyles from './burgerConstructor.module.css';
-import PropTypes from 'prop-types';
-import { ingredientType } from '../../utils/types';
+import { ingredientType  } from '../../utils/tsTypes';
 import { useSelector } from 'react-redux';
+import { RootState } from '../../services/store/store';
 import { useNavigate } from 'react-router-dom';
 
-const IngredientItem = ({ item, index, moveIngredient, handleRemove }) => {
-  const ref = React.useRef(null);
+interface IngredientItemProps {
+  item: ingredientType ;
+  index: number;
+  moveIngredient: (fromIndex: number, toIndex: number) => void;
+  handleRemove: (uuid: string) => void;
+}
+
+const IngredientItem: React.FC<IngredientItemProps> = ({ item, index, moveIngredient, handleRemove }) => {
+  const ref = useRef<HTMLLIElement>(null);
 
   const [, drop] = useDrop({
     accept: 'constructor-ingredient',
-    hover(draggedItem) {
+    hover(draggedItem: { index: number }) {
       if (draggedItem.index === index) return;
       moveIngredient(draggedItem.index, index);
       draggedItem.index = index;
@@ -28,39 +35,57 @@ const IngredientItem = ({ item, index, moveIngredient, handleRemove }) => {
 
   return (
     <li ref={ref} className="p-2" key={item.uuid}>
-      <DragIcon />
+      <DragIcon type={'primary'} />
       <div className={`${burgerConstructorStyles.ingredients__main_list_inner_wrapper} ${burgerConstructorStyles.ingredients__default_bun_inner}`}>
         <img src={item.image_mobile} alt={item.name} />
         <p className={`text text_type_main-default ${burgerConstructorStyles.ingredients__name}`}>{item.name}</p>
         <div className={burgerConstructorStyles.ingredients__main_list_inner__secondary_wrapper}>
           <div className={burgerConstructorStyles.ingredients__main_list_price_wrapper}>
             <p className={`text text_type_digits-default ${burgerConstructorStyles.ingredients__main_list_price}`}>{item.price}</p>
-            <CurrencyIcon className={burgerConstructorStyles.ingredients__currency} />
+            <span className={burgerConstructorStyles.ingredients__currency}>
+              <CurrencyIcon type="primary" />
+            </span>
           </div>
-          <DeleteIcon onClick={() => handleRemove(item.uuid)} />
+          <DeleteIcon onClick={() => item.uuid && handleRemove(item.uuid)} type={'primary'} />
         </div>
       </div>
     </li>
   );
+  
 };
 
-function BurgerConstructor({ data, handleOrderDetailsOpen, handleIngredientDrop, handleReorder, handleRemove }) {
+interface BurgerConstructorProps {
+  data: ingredientType [];
+  handleOrderDetailsOpen: () => void;
+  handleIngredientDrop: (id: string, type: string) => void;
+  handleReorder: (fromIndex: number, toIndex: number) => void;
+  handleRemove: (uuid: string) => void;
+  isAuthentficated: boolean;
+}
+
+const BurgerConstructor: React.FC<BurgerConstructorProps> = ({
+  data,
+  handleOrderDetailsOpen,
+  handleIngredientDrop,
+  handleReorder,
+  handleRemove,
+}) => {
   const [{ isOver }, drop] = useDrop(() => ({
     accept: 'ingredient',
-    drop: (item, monitor) => {
+    drop: (item: { id: string; type: string }, monitor: DropTargetMonitor) => {
       if (monitor.didDrop()) return;
       handleIngredientDrop(item.id, item.type);
     },
-    collect: (monitor) => ({
+    collect: (monitor: DropTargetMonitor) => ({
       isOver: monitor.isOver(),
     }),
   }));
 
-  const moveIngredient = (fromIndex, toIndex) => {
+  const moveIngredient = (fromIndex: number, toIndex: number) => {
     handleReorder(fromIndex, toIndex);
   };
 
-  const { isAuthentficated } = useSelector((state) => state.user);
+  const { isAuthentficated } = useSelector((state: RootState) => state.user);
   const navigate = useNavigate();
 
   const handleRedirectToLogin = () => {
@@ -87,7 +112,7 @@ function BurgerConstructor({ data, handleOrderDetailsOpen, handleIngredientDrop,
               <div className={burgerConstructorStyles.ingredients__main_list_inner__secondary_wrapper}>
                 <div className={burgerConstructorStyles.ingredients__main_list_price_wrapper}>
                   <p className={`text text_type_digits-default ${burgerConstructorStyles.ingredients__main_list_price}`}>{bun.price}</p>
-                  <CurrencyIcon />
+                  <CurrencyIcon type={'primary'} />
                 </div>
                 <LockIcon type="secondary" />
               </div>
@@ -129,7 +154,7 @@ function BurgerConstructor({ data, handleOrderDetailsOpen, handleIngredientDrop,
               <div className={burgerConstructorStyles.ingredients__main_list_inner__secondary_wrapper}>
                 <div className={burgerConstructorStyles.ingredients__main_list_price_wrapper}>
                   <p className={`text text_type_digits-default ${burgerConstructorStyles.ingredients__main_list_price}`}>{bun.price}</p>
-                  <CurrencyIcon />
+                  <CurrencyIcon type={'primary'} />
                 </div>
                 <LockIcon type="secondary" />
               </div>
@@ -146,7 +171,7 @@ function BurgerConstructor({ data, handleOrderDetailsOpen, handleIngredientDrop,
       <div className={burgerConstructorStyles.ingredients__final_price_container}>
         <div className={burgerConstructorStyles.ingredients__final_price_wrapper}>
           <h2 className={`text text_type_digits-medium ${burgerConstructorStyles.ingredients__final_price_digit}`}>{adjustedTotalPrice}</h2>
-          <CurrencyIcon />
+          <CurrencyIcon type={'primary'} />
         </div>
         <Button
           htmlType="button"
@@ -165,15 +190,6 @@ function BurgerConstructor({ data, handleOrderDetailsOpen, handleIngredientDrop,
       </div>
     </section>
   );
-}
-
-BurgerConstructor.propTypes = {
-  data: PropTypes.arrayOf(ingredientType).isRequired,
-  handleOrderDetailsOpen: PropTypes.func.isRequired,
-  handleIngredientDrop: PropTypes.func.isRequired,
-  handleReorder: PropTypes.func.isRequired,
-  handleRemove: PropTypes.func.isRequired,
-  isAuthentficated: PropTypes.bool.isRequired,
 };
 
 export { BurgerConstructor };

@@ -2,15 +2,16 @@ import React from 'react';
 import { Logo, BurgerIcon, ListIcon, ProfileIcon } from '@ya.praktikum/react-developer-burger-ui-components';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import headerStyles from './header.module.css';
-import PropTypes from 'prop-types';
 
-function Header({isAuthentficated}) {
+interface HeaderProps {
+    isAuthentficated: boolean;
+}
+
+function Header({ isAuthentficated }: HeaderProps) {
     const location = useLocation();
     const navigate = useNavigate();
-    
-    Header.propTypes = {
-        isAuthentficated: PropTypes.bool.isRequired,
-      };
+
+
 
     const handleProfileClick = () => {
         if (!isAuthentficated) {
@@ -26,8 +27,8 @@ function Header({isAuthentficated}) {
                 <div className={headerStyles.header__double_elements}>
                     <div className={`p-2 ${headerStyles.header__pair_elements}`}>
                         <BurgerIcon type={location.pathname === '/' ? 'primary' : 'secondary'} />
-                        <NavLink 
-                            to="/" 
+                        <NavLink
+                            to="/"
                             className={({ isActive }) =>
                                 `text text_type_main-default header__icons_text ${isActive ? headerStyles.header__icons_text_active : headerStyles.header__icons_text}`
                             }
@@ -37,8 +38,8 @@ function Header({isAuthentficated}) {
                     </div>
                     <div className={`p-2 ${headerStyles.header__pair_elements}`}>
                         <ListIcon type={location.pathname === '/orders' ? 'primary' : 'secondary'} />
-                        <NavLink 
-                            to="/orders" 
+                        <NavLink
+                            to="/orders"
                             className={({ isActive }) =>
                                 `text text_type_main-default header__icons_text ${isActive ? headerStyles.header__icons_text_active : headerStyles.header__icons_text}`
                             }
@@ -52,8 +53,8 @@ function Header({isAuthentficated}) {
                 </div>
                 <div className={`p-2 ${headerStyles.header__pair_elements}`} onClick={handleProfileClick}>
                     <ProfileIcon type={location.pathname.startsWith('/profile') ? 'primary' : 'secondary'} />
-                    <NavLink 
-                        to="/profile" 
+                    <NavLink
+                        to="/profile"
                         className={({ isActive }) =>
                             `text text_type_main-default header__icons_text ${isActive ? headerStyles.header__icons_text_active : headerStyles.header__icons_text}`
                         }
