@@ -1,7 +1,12 @@
 import React from 'react';
 import ingredientDetailsStyles from './ingredientDetails.module.css';
+import { ingredientType } from '../../../utils/tsTypes';
 
-function IngredientDetails({ ingredient }) {
+interface IngredientDetailsProps {
+  ingredient: ingredientType;
+}
+
+function IngredientDetails({ ingredient }: IngredientDetailsProps) {
   if (!ingredient) {
     return <p>Ингредиент не найден</p>;
   }

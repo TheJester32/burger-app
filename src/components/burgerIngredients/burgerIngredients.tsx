@@ -1,21 +1,33 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { useDrag } from 'react-dnd';
+import { useDrag, DragSourceMonitor } from 'react-dnd';
 import { CurrencyIcon, Counter } from '@ya.praktikum/react-developer-burger-ui-components';
 import burgerIngredientsStyles from './burgerIngredients.module.css';
 import { useSelector } from 'react-redux';
+import { RootState } from '../../services/store/store';
+import { ingredientType } from '../../utils/tsTypes';
 
-function BurgerIngredients({ data, handleIngredientDetailsOpen }) {
-  const constructorIngredients = useSelector(state => state.ingredients.constructorIngredients);
-  const buns = useSelector(state => state.ingredients.buns);
+interface BurgerIngredientsProps {
+  data: ingredientType[];
+  handleIngredientDetailsOpen: (ingredient: ingredientType) => void;
+}
 
-  const [activeTab, setActiveTab] = useState('buns');
+interface IngredientProps {
+  item: ingredientType;
+  handleIngredientDetailsOpen: (ingredient: ingredientType) => void;
+}
 
-  const bunsRef = useRef(null);
-  const saucesRef = useRef(null);
-  const mainsRef = useRef(null);
-  const containerRef = useRef(null);
+function BurgerIngredients({ data, handleIngredientDetailsOpen }: BurgerIngredientsProps) {
+  const constructorIngredients = useSelector((state: RootState) => state.ingredients.constructorIngredients);
+  const buns = useSelector((state: RootState) => state.ingredients.buns);
 
-  const getIngredientCount = (id) => {
+  const [activeTab, setActiveTab] = useState<'buns' | 'sauces' | 'mains'>('buns');
+
+  const bunsRef = useRef<HTMLLIElement>(null);
+  const saucesRef = useRef<HTMLLIElement>(null);
+  const mainsRef = useRef<HTMLLIElement>(null);
+  const containerRef = useRef<HTMLUListElement>(null);
+
+  const getIngredientCount = (id: string): number => {
     let count = 0;
     if (buns.some(bun => bun._id === id)) {
       count += 2;
@@ -28,14 +40,14 @@ function BurgerIngredients({ data, handleIngredientDetailsOpen }) {
     return count;
   };
 
-  const Ingredient = ({ item }) => {
-    const [{ isDragging }, drag] = useDrag(() => ({
+  const Ingredient: React.FC<IngredientProps> = ({ item }) => {
+    const [{ isDragging }, drag] = useDrag({
       type: 'ingredient',
       item: { id: item._id, type: item.type },
-      collect: (monitor) => ({
+      collect: (monitor: DragSourceMonitor) => ({
         isDragging: monitor.isDragging(),
       }),
-    }));
+    });
 
     return (
       <li
@@ -49,7 +61,7 @@ function BurgerIngredients({ data, handleIngredientDetailsOpen }) {
         <img src={item.image} alt={item.name} />
         <div className={burgerIngredientsStyles.constructor__element_price_wrapper}>
           <p className={`text text_type_digits-default ${burgerIngredientsStyles.constructor__element_price}`}>{item.price}</p>
-          <CurrencyIcon />
+          <CurrencyIcon type={'primary'} />
         </div>
         <p className="text text_type_main-default p-1">{item.name}</p>
       </li>
@@ -78,10 +90,10 @@ function BurgerIngredients({ data, handleIngredientDetailsOpen }) {
 
   useEffect(() => {
     const container = containerRef.current;
-    container.addEventListener('scroll', handleScroll);
+    container?.addEventListener('scroll', handleScroll);
 
     return () => {
-      container.removeEventListener('scroll', handleScroll);
+      container?.removeEventListener('scroll', handleScroll);
     };
   }, []);
 
@@ -107,19 +119,19 @@ function BurgerIngredients({ data, handleIngredientDetailsOpen }) {
         <li ref={bunsRef} className="text text_type_main-medium">Булки</li>
         <div className={burgerIngredientsStyles.constructor__elements_wrapper}>
           {bunsData.map(bun => (
-            <Ingredient key={bun._id} item={bun} />
+            <Ingredient key={bun._id} item={bun} handleIngredientDetailsOpen={handleIngredientDetailsOpen} />
           ))}
         </div>
         <li ref={saucesRef} className="text text_type_main-medium">Соусы</li>
         <div className={burgerIngredientsStyles.constructor__elements_wrapper}>
           {saucesData.map(sauce => (
-            <Ingredient key={sauce._id} item={sauce} />
+            <Ingredient key={sauce._id} item={sauce} handleIngredientDetailsOpen={handleIngredientDetailsOpen} />
           ))}
         </div>
         <li ref={mainsRef} className="text text_type_main-medium">Начинки</li>
         <div className={burgerIngredientsStyles.constructor__elements_wrapper}>
           {mainsData.map(main => (
-            <Ingredient key={main._id} item={main} />
+            <Ingredient key={main._id} item={main} handleIngredientDetailsOpen={handleIngredientDetailsOpen} />
           ))}
         </div>
       </ul>

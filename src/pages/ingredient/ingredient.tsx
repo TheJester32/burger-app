@@ -3,12 +3,13 @@ import { useParams, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchIngredients } from '../../services/reducers/ingredientsSlice';
 import IngredientDetails from '../../components/modals/ingredientModal/ingredientDetails';
+import { AppDispatch, RootState } from '../../services/store/store';
 
 function IngredientPage() {
   const { id } = useParams();
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
   const location = useLocation();
-  const { allIngredients, loading, error } = useSelector(state => state.ingredients);
+  const { allIngredients, loading, error } = useSelector((state: RootState) => state.ingredients);
 
   useEffect(() => {
     if (allIngredients.length === 0) {
@@ -22,7 +23,7 @@ function IngredientPage() {
     }
   }, [location.state]);
 
-  const ingredient = allIngredients.find(item => item._id === id);
+  const ingredient = allIngredients.find((item: { _id: string | undefined; }) => item._id === id);
 
   if (loading) {
     return <p>Загрузка...</p>;
