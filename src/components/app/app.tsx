@@ -9,6 +9,7 @@ import { Register } from '../../pages/register/register';
 import { ForgotPassword } from '../../pages/forgotPassword/forgotPassword';
 import { ResetPassword } from '../../pages/resetPassword/resetPassword';
 import { Profile } from '../../pages/profile/profile';
+import { FeedPage } from '../../pages/feed/feed';
 import { IngredientPage } from '../../pages/ingredient/ingredient';
 import { RouteGuard } from '../routes/protectedRouteElement';
 import { useSelector } from 'react-redux';
@@ -34,6 +35,7 @@ function App() {
         } />
         <Route path="/profile" element={<RouteGuard element={<Profile />} isProtected={true} />} />
         <Route path="/ingredients/:id" element={<IngredientPage />} />
+        <Route path="/feed" element={<FeedPage />} />
       </Routes>
       {background && (
         <Routes>
