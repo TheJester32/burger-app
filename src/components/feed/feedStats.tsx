@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import feedStyles from "./feed.module.css";
 
 type Order = {
@@ -7,41 +7,55 @@ type Order = {
 };
 
 function FeedStats() {
-  const orders: Order[] = [
-    { id: "034535", ready: true },
-    { id: "034537", ready: false },
-    { id: "034531", ready: false },
-    { id: "034537", ready: false },
-    { id: "034537", ready: false },
-    { id: "034537", ready: false },
-    { id: "034537", ready: false },
-    { id: "034537", ready: false },
-    { id: "034537", ready: false },
-    { id: "034537", ready: false },
-    { id: "034537", ready: true },
-    { id: "034537", ready: true },
-    { id: "034537", ready: true },
-    { id: "034537", ready: true },
-    { id: "034537", ready: true },
-    { id: "034537", ready: true },
-    { id: "034537", ready: true },
-    { id: "034537", ready: true },
-    { id: "034537", ready: true },
-    { id: "034537", ready: true },
-    { id: "034537", ready: true },
-    { id: "034537", ready: true },
-    { id: "034537", ready: false },
-    { id: "034537", ready: false },
-    { id: "034537", ready: false },
-    { id: "034537", ready: false },
-    { id: "034537", ready: false },
-    { id: "034537", ready: false },
-    { id: "034537", ready: false },
-    { id: "034537", ready: false },
-    { id: "034535", ready: true },
-    { id: "034535", ready: true },
-    { id: "034535", ready: true },
-  ];
+  const [readyOrders, setReadyOrders] = useState<Order[]>([]);
+  const [inWorkOrders, setInWorkOrders] = useState<Order[]>([]);
+  const [total, setTotal] = useState<number>(0);
+  const [totalToday, setTotalToday] = useState<number>(0);
+
+  useEffect(() => {
+    const URL = "wss://norma.nomoreparties.space/orders/all";
+
+    const socket = new WebSocket(URL);
+
+    socket.onopen = () => {
+      console.log("WebSocket соединение открыто");
+    };
+
+    socket.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.success) {
+        const ready = data.orders.filter(
+          (order: any) => order.status === "done"
+        ).map((order: any) => ({
+          id: order.number.toString(),
+          ready: true,
+        }));
+        const inWork = data.orders.filter(
+          (order: any) => order.status !== "done"
+        ).map((order: any) => ({
+          id: order.number.toString(),
+          ready: false,
+        }));
+
+        setReadyOrders(ready);
+        setInWorkOrders(inWork);
+        setTotal(data.total);
+        setTotalToday(data.totalToday);
+      }
+    };
+
+    socket.onerror = (error) => {
+      console.error("Ошибка WebSocket:", error);
+    };
+
+    socket.onclose = () => {
+      console.log("WebSocket соединение закрыто");
+    };
+
+    return () => {
+      socket.close();
+    };
+  }, []);
 
   const groupOrders = (orders: Order[], groupSize: number) => {
     let groupedOrders: Order[][] = [];
@@ -50,9 +64,6 @@ function FeedStats() {
     }
     return groupedOrders;
   };
-
-  const readyOrders = orders.filter((order) => order.ready === true);
-  const inWorkOrders = orders.filter((order) => order.ready === false);
 
   const groupedReadyOrders = groupOrders(readyOrders, 10);
   const groupedInWorkOrders = groupOrders(inWorkOrders, 10);
@@ -65,7 +76,7 @@ function FeedStats() {
             <p className="text text_type_main-medium">Готовы:</p>
             <div className={feedStyles.feedStats__grid}>
               {groupedReadyOrders.map((group, groupIndex) => (
-                <ul key={groupIndex}>
+                <ul key={groupIndex} className="custom-scroll">
                   {group.map((order, index) => (
                     <li
                       key={index}
@@ -82,7 +93,7 @@ function FeedStats() {
             <p className="text text_type_main-medium">В работе:</p>
             <div className={feedStyles.feedStats__grid}>
               {groupedInWorkOrders.map((group, groupIndex) => (
-                <ul key={groupIndex}>
+                <ul key={groupIndex} className="custom-scroll">
                   {group.map((order, index) => (
                     <li
                       key={index}
@@ -99,11 +110,11 @@ function FeedStats() {
 
         <div className={feedStyles.feedStats__total_wrapper}>
           <p className="text text_type_main-medium">Выполнено за все время:</p>
-          <p className="text text_type_digits-large">28 752</p>
+          <p className="text text_type_digits-large">{total}</p>
         </div>
         <div className={feedStyles.feedStats__total_wrapper}>
           <p className="text text_type_main-medium">Выполнено за сегодня:</p>
-          <p className="text text_type_digits-large">138</p>
+          <p className="text text_type_digits-large">{totalToday}</p>
         </div>
       </section>
     </>
