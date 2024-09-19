@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import feedStyles from "./feed.module.css";
 import { CurrencyIcon } from "@ya.praktikum/react-developer-burger-ui-components";
-import { setOrders, setLoading, setError } from "../../services/reducers/orderSlice";
+import { setOrders, setLoading, setError } from "../../services/reducers/feedOrdersSlice";
 import { RootState, AppDispatch } from "../../services/store/store";
-import { fetchIngredientData } from "../../services/reducers/orderSlice";
+import { fetchIngredientData } from "../../services/reducers/feedOrdersSlice";
 
 interface IngredientImages {
   [key: string]: { image: string, price: number };
