@@ -34,10 +34,17 @@ export const createOrder = createAsyncThunk<number, ingredientType[]>(
   'ingredients/createOrder',
   async (ingredients, thunkAPI) => {
     try {
+      const accessToken = localStorage.getItem('accessToken');
+
+      if (!accessToken) {
+        return thunkAPI.rejectWithValue('Токен не найден');
+      }
+
       const response = await fetch(`${BASE_URL}/orders`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `${accessToken}`,
         },
         body: JSON.stringify({ ingredients }),
       });
@@ -52,6 +59,7 @@ export const createOrder = createAsyncThunk<number, ingredientType[]>(
     }
   }
 );
+
 
 const ingredientsSlice = createSlice({
   name: 'ingredients',

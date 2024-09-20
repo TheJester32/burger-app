@@ -75,7 +75,10 @@ export const HomePage = () => {
   };
 
   const handleOrderDetailsOpen = () => {
-    const ingredients = [...buns, ...constructorIngredients];
+    let ingredients = [...buns, ...constructorIngredients];
+    if (buns.length > 0) {
+      ingredients = [...ingredients, buns[0]];
+    }
     dispatch(createOrder(ingredients)).then((action) => {
       if (createOrder.fulfilled.match(action)) {
         dispatch(clearConstructor());
