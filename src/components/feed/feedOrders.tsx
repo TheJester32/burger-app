@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import feedStyles from "./feed.module.css";
 import { CurrencyIcon } from "@ya.praktikum/react-developer-burger-ui-components";
-import { setOrders, setLoading, setError } from "../../services/reducers/feedOrdersSlice";
+import { connectWebSocket, disconnectWebSocket } from "../../services/reducers/feedOrdersSlice";
 import { RootState, AppDispatch } from "../../services/store/store";
 import { fetchIngredientData } from "../../services/reducers/feedOrdersSlice";
 
 interface IngredientImages {
-  [key: string]: { image: string, price: number };
+  [key: string]: { image: string; price: number };
 }
 
 function Feed() {
@@ -20,44 +20,15 @@ function Feed() {
       const data = await fetchIngredientData();
       setIngredientData(data);
     }
-    
+
     loadIngredientData();
   }, []);
 
   useEffect(() => {
-    const URL = 'wss://norma.nomoreparties.space/orders/all';
-
-    dispatch(setLoading(true));
-
-    const socket = new WebSocket(URL);
-
-    socket.onopen = () => {
-      dispatch(setLoading(false));
-    };
-
-    socket.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      if (data.success) {
-        dispatch(setOrders(data.orders));
-      }
-    };
-
-    socket.onerror = (error) => {
-      console.error("Ошибка WebSocket:", error);
-      dispatch(setError("Ошибка при работе с WebSocket"));
-    };
-
-    socket.onclose = (event) => {
-      if (event.wasClean) {
-        console.log("Соединение закрыто чисто");
-      } else {
-        console.warn("Обрыв соединения");
-      }
-    };
+    dispatch(connectWebSocket());
 
     return () => {
-      socket.close();
-      console.log("WebSocket соединение закрыто");
+      dispatch(disconnectWebSocket());
     };
   }, [dispatch]);
 
@@ -68,12 +39,7 @@ function Feed() {
     }, 0);
   };
 
-  if (loading) return <p 
-  style={{
-    color: '#04CCCC',
-    fontWeight: 'bolder',
-    textAlign: 'center'
-  }}>Загрузка ингредиентов</p>;
+  if (loading) return <p style={{ color: '#04CCCC', fontWeight: 'bolder', textAlign: 'center' }}>Загрузка ингредиентов</p>;
 
   return (
     <section className="feed">

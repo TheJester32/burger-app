@@ -2,13 +2,13 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { BASE_URL } from '../../utils/api';
 
 export interface Order {
-    _id: string;
-    number: number;
-    createdAt: string;
-    name: string;
-    ingredients: string[];
-    status: string
-  }
+  _id: string;
+  number: number;
+  createdAt: string;
+  name: string;
+  ingredients: string[];
+  status: string;
+}
 
 interface OrdersState {
   orders: Order[];
@@ -26,6 +26,12 @@ const initialState: OrdersState = {
   error: null,
 };
 
+interface SetOrdersPayload {
+  orders: Order[];
+  total: number;
+  totalToday: number;
+}
+
 export async function fetchIngredientData(): Promise<{ [key: string]: { image: string, price: number } }> {
   const response = await fetch(`${BASE_URL}/ingredients`);
   const data = await response.json();
@@ -42,8 +48,10 @@ const ordersSlice = createSlice({
   name: 'orders',
   initialState,
   reducers: {
-    setOrders(state, action: PayloadAction<Order[]>) {
-      state.orders = action.payload;
+    setOrders(state, action: PayloadAction<SetOrdersPayload>) {
+      state.orders = action.payload.orders;
+      state.total = action.payload.total;
+      state.totalToday = action.payload.totalToday;
     },
     setLoading(state, action: PayloadAction<boolean>) {
       state.loading = action.payload;
@@ -51,13 +59,14 @@ const ordersSlice = createSlice({
     setError(state, action: PayloadAction<string | null>) {
       state.error = action.payload;
     },
-    clearOrders(state) {
-      state.orders = [];
-      state.total = 0;
-      state.totalToday = 0;
+    connectWebSocket(state) {
+      state.loading = true;
+    },
+    disconnectWebSocket(state) {
+      state.loading = false;
     },
   },
 });
 
-export const { setOrders, setLoading, setError, clearOrders } = ordersSlice.actions;
+export const { setOrders, setLoading, setError, connectWebSocket, disconnectWebSocket } = ordersSlice.actions;
 export default ordersSlice.reducer;
