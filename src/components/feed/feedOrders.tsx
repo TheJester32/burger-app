@@ -39,7 +39,7 @@ function Feed() {
     }, 0);
   };
 
-  if (loading) return <p style={{ color: '#04CCCC', fontWeight: 'bolder', textAlign: 'center' }}>Загрузка ингредиентов</p>;
+  if (loading) return <p style={{ color: '#04CCCC', fontWeight: 'bolder', textAlign: 'center' }}>Загрузка заказов</p>;
 
   return (
     <section className="feed">

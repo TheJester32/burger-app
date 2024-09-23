@@ -3,10 +3,9 @@ import feedStyles from "../feed/feed.module.css";
 import { CurrencyIcon } from "@ya.praktikum/react-developer-burger-ui-components";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  setOrders,
-  setLoading,
-  setError,
   fetchIngredientData,
+  startConnection,
+  closeConnection,
 } from "../../services/reducers/profileOrdersSlice";
 import { RootState, AppDispatch } from "../../services/store/store";
 
@@ -22,8 +21,6 @@ function ProfileOrders() {
 
   const [ingredientData, setIngredientData] = useState<IngredientImages>({});
 
-  const accessToken = localStorage.getItem("accessToken")?.split(" ")[1];
-
   useEffect(() => {
     async function loadIngredientData() {
       const data = await fetchIngredientData();
@@ -34,53 +31,12 @@ function ProfileOrders() {
   }, []);
 
   useEffect(() => {
-    const URL = "wss://norma.nomoreparties.space/orders";
-
-    if (!accessToken) {
-      dispatch(setError("Токен отсутствует"));
-      return;
-    }
-
-    dispatch(setLoading(true));
-
-    const socket = new WebSocket(`${URL}?token=${accessToken}`);
-
-    socket.onopen = () => {
-      dispatch(setLoading(false));
-    };
-
-    socket.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-
-      if (data.message === "Invalid or missing token") {
-        console.error("Неверный или отсутствующий токен");
-        dispatch(setError("Неверный или отсутствующий токен"));
-        return;
-      }
-
-      if (data.success) {
-        dispatch(setOrders(data.orders));
-      }
-    };
-
-    socket.onerror = (error) => {
-      dispatch(setError("Ошибка при работе с WebSocket"));
-    };
-
-    socket.onclose = (event) => {
-      if (event.wasClean) {
-        console.log("Соединение закрыто чисто");
-      } else {
-        console.warn(
-          `Обрыв соединения. Код: ${event.code} Причина: ${event.reason}`
-        );
-      }
-    };
+    dispatch(startConnection());
 
     return () => {
-      socket.close();
+      dispatch(closeConnection());
     };
-  }, [accessToken, dispatch]);
+  }, [dispatch]);
 
   const calculateTotalPrice = (ingredientIds: string[]) => {
     return ingredientIds.reduce((total, id) => {
@@ -98,7 +54,7 @@ function ProfileOrders() {
           textAlign: "center",
         }}
       >
-        Загрузка ингредиентов
+        Загрузка заказов
       </p>
     );
 
@@ -130,7 +86,7 @@ function ProfileOrders() {
                 style={{
                   color:
                     order.status === "done"
-                      ? "№fff"
+                      ? "#fff"
                       : order.status === "pending"
                       ? "#5AC9CA"
                       : "#D43E2B",
@@ -161,9 +117,7 @@ function ProfileOrders() {
                   ))}
                   {order.ingredients.length > 5 && (
                     <div
-                      className={
-                        feedStyles.feed__list_ingredient_img_more_wrapper
-                      }
+                      className={feedStyles.feed__list_ingredient_img_more_wrapper}
                     >
                       <img
                         className={feedStyles.feed__list_ingredient_img}

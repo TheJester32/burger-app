@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import rootReducer from './rootReducer';
 import { loadState, saveState } from '../../utils/localStorage';
 import wsFeedMiddleware from '../middlewares/wsFeedMiddleWare';
+import wsProfileOrdersMiddleware from '../middlewares/wsProfileOrdersMiddleware'
 
 const preloadedState = loadState();
 
@@ -10,7 +11,7 @@ const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: false,
-    }).concat(wsFeedMiddleware),
+    }).concat(wsFeedMiddleware, wsProfileOrdersMiddleware),
   preloadedState,
   devTools: process.env.NODE_ENV !== 'production',
 });

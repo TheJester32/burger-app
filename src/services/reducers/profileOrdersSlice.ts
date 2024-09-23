@@ -50,8 +50,10 @@ const profileOrdersSlice = createSlice({
         clearOrders(state) {
             state.orders = [];
         },
+        startConnection(state) {},
+        closeConnection(state) {},
     },
 });
 
-export const { setOrders, setLoading, setError, clearOrders } = profileOrdersSlice.actions;
+export const { setOrders, setLoading, setError, clearOrders, startConnection, closeConnection } = profileOrdersSlice.actions;
 export default profileOrdersSlice.reducer;
