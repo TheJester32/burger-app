@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from "react";
 import feedStyles from "../feed/feed.module.css";
+import { useNavigate } from "react-router";
 import { CurrencyIcon } from "@ya.praktikum/react-developer-burger-ui-components";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchIngredientData,
   startConnection,
   closeConnection,
+  Order,
 } from "../../services/reducers/profileOrdersSlice";
 import { RootState, AppDispatch } from "../../services/store/store";
+import { ProfileOrderDetails } from "../modals/profileOrderModal/profileOrderDetails";
+import Modal from "../../components/modals/modal";
 
 interface IngredientImages {
   [key: string]: { image: string; price: number };
@@ -18,6 +22,7 @@ function ProfileOrders() {
   const { orders, loading } = useSelector(
     (state: RootState) => state.profileOrders
   );
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
   const [ingredientData, setIngredientData] = useState<IngredientImages>({});
 
@@ -45,6 +50,18 @@ function ProfileOrders() {
     }, 0);
   };
 
+  const navigate = useNavigate();
+
+  const handleOrderClick = (order: Order) => {
+    setSelectedOrder(order);
+    window.history.pushState({ modal: true }, '', `/profile/orders/${order.number}`);
+  };
+
+  const closeModal = () => {
+    setSelectedOrder(null);
+    navigate('/profile/orders');
+  };
+
   if (loading)
     return (
       <p
@@ -64,7 +81,7 @@ function ProfileOrders() {
         {[...orders]
           .sort((a, b) => b.number - a.number)
           .map((order) => (
-            <li key={order._id}>
+            <li key={order._id} onClick={() => handleOrderClick(order)} style={{ cursor: "pointer" }}>
               <div className={feedStyles.feed__list_inner_wrapper}>
                 <p
                   className={`text text_type_digits-default ${feedStyles.feed__list_number}`}
@@ -144,6 +161,11 @@ function ProfileOrders() {
             </li>
           ))}
       </ul>
+      {selectedOrder && (
+        <Modal isOpen={Boolean(selectedOrder)} handleClose={closeModal}>
+          <ProfileOrderDetails order={selectedOrder} />
+        </Modal>
+      )}
     </section>
   );
 }

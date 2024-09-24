@@ -11,8 +11,10 @@ import { ResetPassword } from "../../pages/resetPassword/resetPassword";
 import { Profile } from "../../pages/profile/profile";
 import { ProfileOrders } from "../profileOrders/profileOrders";
 import { FeedPage } from "../../pages/feed/feed";
+import { ProfileOrderPage } from "../../pages/profileOrder/profileOrder";
 import { IngredientPage } from "../../pages/ingredient/ingredient";
 import { RouteGuard } from "../routes/protectedRouteElement";
+import { FeedOrderPage } from "../../pages/feedOrder/feedOrder";
 import { useSelector } from "react-redux";
 import { RootState } from "../../services/store/store";
 
@@ -37,12 +39,16 @@ function App() {
         <Route path="/profile" element={<RouteGuard element={<Profile />} isProtected={true} />}>
           <Route path="orders" element={<RouteGuard element={<ProfileOrders />} isProtected={true} />} />
         </Route>
+        <Route path="/profile/orders/:number" element={<RouteGuard element={<ProfileOrderPage  />} isProtected={true} />} />
         <Route path="/ingredients/:id" element={<IngredientPage />} />
         <Route path="/feed" element={<FeedPage />} />
+        <Route path="/feed/:number" element={<FeedOrderPage />} />
       </Routes>
       {background && (
         <Routes>
           <Route path="/ingredients/:id" element={<IngredientPage />} />
+          <Route path="/feed/:number" element={<FeedOrderPage />} />
+          <Route path="orders/:number" element={<RouteGuard element={<ProfileOrderPage  />} isProtected={true} />} />
         </Routes>
       )}
     </DndProvider>

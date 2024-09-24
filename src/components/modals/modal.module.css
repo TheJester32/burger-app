@@ -1,5 +1,6 @@
 .modal {
   position: fixed;
+  z-index: 999999;
   top: 0;
   left: 0;
   width: 100%;
@@ -18,6 +19,7 @@
   height: 100%;
   background: #000;
   opacity: 60%;
+  z-index: 999;
 }
 
 .modal_content {
@@ -25,7 +27,7 @@
   background: #1C1C21;
   padding: 40px;
   border-radius: 50px;
-  z-index: 10;
+  z-index: 9999;
 }
 
 .modal_content svg {

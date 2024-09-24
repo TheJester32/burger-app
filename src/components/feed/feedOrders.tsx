@@ -1,10 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router";
 import feedStyles from "./feed.module.css";
 import { CurrencyIcon } from "@ya.praktikum/react-developer-burger-ui-components";
-import { connectWebSocket, disconnectWebSocket } from "../../services/reducers/feedOrdersSlice";
+import {
+  connectWebSocket,
+  disconnectWebSocket,
+  fetchIngredientData,
+  Order
+} from "../../services/reducers/feedOrdersSlice";
 import { RootState, AppDispatch } from "../../services/store/store";
-import { fetchIngredientData } from "../../services/reducers/feedOrdersSlice";
+import Modal from "../../components/modals/modal";
+import { FeedOrderDetails } from "../modals/feedOrderModal/feedOrderDetails";
 
 interface IngredientImages {
   [key: string]: { image: string; price: number };
@@ -14,19 +21,29 @@ function Feed() {
   const dispatch = useDispatch<AppDispatch>();
   const { orders, loading } = useSelector((state: RootState) => state.orders);
   const [ingredientData, setIngredientData] = useState<IngredientImages>({});
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
   useEffect(() => {
     async function loadIngredientData() {
-      const data = await fetchIngredientData();
-      setIngredientData(data);
+      try {
+        const ingredients = await dispatch(fetchIngredientData()).unwrap();
+        const ingredientMap: IngredientImages = ingredients.reduce(
+          (acc: IngredientImages, ingredient: { _id: string; image: string; price: number }) => ({
+            ...acc,
+            [ingredient._id]: { image: ingredient.image, price: ingredient.price }
+          }),
+          {} as IngredientImages
+        );
+        setIngredientData(ingredientMap);
+      } catch (error) {
+        console.error("Ошибка при загрузке данных ингредиентов", error);
+      }
     }
-
     loadIngredientData();
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     dispatch(connectWebSocket());
-
     return () => {
       dispatch(disconnectWebSocket());
     };
@@ -39,14 +56,27 @@ function Feed() {
     }, 0);
   };
 
-  if (loading) return <p style={{ color: '#04CCCC', fontWeight: 'bolder', textAlign: 'center' }}>Загрузка заказов</p>;
+  const navigate = useNavigate();
+
+  const handleOrderClick = (order: Order) => {
+    setSelectedOrder(order);
+    window.history.pushState({ modal: true }, '', `/feed/${order.number}`);
+  };
+
+  const closeModal = () => {
+    setSelectedOrder(null);
+    navigate('/feed');
+  };
+
+  if (loading)
+    return <p style={{ color: '#04CCCC', fontWeight: 'bolder', textAlign: 'center' }}>Загрузка заказов</p>;
 
   return (
     <section className="feed">
       <h1 className="text text_type_main-large">Лента заказов</h1>
       <ul className={`custom-scroll ${feedStyles.feed__list}`}>
         {orders.map((order) => (
-          <li key={order._id}>
+          <li key={order._id} onClick={() => handleOrderClick(order)} style={{ cursor: "pointer" }}>
             <div className={feedStyles.feed__list_inner_wrapper}>
               <p className={`text text_type_digits-default ${feedStyles.feed__list_number}`}>
                 {`#${order.number}`}
@@ -92,6 +122,11 @@ function Feed() {
           </li>
         ))}
       </ul>
+      {selectedOrder && (
+        <Modal isOpen={Boolean(selectedOrder)} handleClose={closeModal}>
+          <FeedOrderDetails order={selectedOrder} />
+        </Modal>
+      )}
     </section>
   );
 }

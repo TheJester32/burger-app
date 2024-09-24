@@ -1,5 +1,5 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { BASE_URL } from '../../utils/api';
+import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
+import { BASE_URL } from "../../utils/api";
 
 export interface Order {
   _id: string;
@@ -10,12 +10,20 @@ export interface Order {
   status: string;
 }
 
+interface Ingredient {
+  _id: string;
+  image: string;
+  price: number;
+}
+
 interface OrdersState {
   orders: Order[];
   total: number;
   totalToday: number;
   loading: boolean;
   error: string | null;
+  ingredients: { [key: string]: { image: string; price: number } };
+  ingredientsLoading: boolean;
 }
 
 const initialState: OrdersState = {
@@ -24,6 +32,8 @@ const initialState: OrdersState = {
   totalToday: 0,
   loading: false,
   error: null,
+  ingredients: {},
+  ingredientsLoading: false,
 };
 
 interface SetOrdersPayload {
@@ -32,20 +42,18 @@ interface SetOrdersPayload {
   totalToday: number;
 }
 
-export async function fetchIngredientData(): Promise<{ [key: string]: { image: string, price: number } }> {
+export const fetchIngredientData = createAsyncThunk<
+  Ingredient[],
+  void,
+  { rejectValue: string }
+>("orders/fetchIngredientData", async () => {
   const response = await fetch(`${BASE_URL}/ingredients`);
   const data = await response.json();
-  const ingredientMap: { [key: string]: { image: string, price: number } } = {};
-  
-  data.data.forEach((ingredient: { _id: string, image: string, price: number }) => {
-      ingredientMap[ingredient._id] = { image: ingredient.image, price: ingredient.price };
-  });
-
-  return ingredientMap;
-}
+  return data.data;
+});
 
 const ordersSlice = createSlice({
-  name: 'orders',
+  name: "orders",
   initialState,
   reducers: {
     setOrders(state, action: PayloadAction<SetOrdersPayload>) {
@@ -66,7 +74,38 @@ const ordersSlice = createSlice({
       state.loading = false;
     },
   },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchIngredientData.pending, (state) => {
+        state.ingredientsLoading = true;
+      })
+      .addCase(fetchIngredientData.fulfilled, (state, action) => {
+        const ingredientMap: {
+          [key: string]: { image: string; price: number };
+        } = {};
+        action.payload.forEach((ingredient) => {
+          ingredientMap[ingredient._id] = {
+            image: ingredient.image,
+            price: ingredient.price,
+          };
+        });
+
+        state.ingredients = ingredientMap;
+        state.ingredientsLoading = false;
+      })
+      .addCase(fetchIngredientData.rejected, (state, action) => {
+        state.ingredientsLoading = false;
+        state.error =
+          action.error.message || "Ошибка при загрузке ингредиентов";
+      });
+  },
 });
 
-export const { setOrders, setLoading, setError, connectWebSocket, disconnectWebSocket } = ordersSlice.actions;
+export const {
+  setOrders,
+  setLoading,
+  setError,
+  connectWebSocket,
+  disconnectWebSocket,
+} = ordersSlice.actions;
 export default ordersSlice.reducer;
