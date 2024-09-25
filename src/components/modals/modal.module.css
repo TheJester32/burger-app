@@ -30,7 +30,7 @@
   z-index: 9999;
 }
 
-.modal_content svg {
+.modal_content svg:nth-child(1) {
   position: absolute;
   top: 55px;
   right: 40px;

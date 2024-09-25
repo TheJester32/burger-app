@@ -11,6 +11,7 @@ export interface Order {
 }
 
 interface Ingredient {
+  name: string;
   _id: string;
   image: string;
   price: number;
