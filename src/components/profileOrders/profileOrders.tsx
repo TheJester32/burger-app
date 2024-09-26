@@ -14,9 +14,8 @@ import { ProfileOrderDetails } from "../modals/profileOrderModal/profileOrderDet
 import Modal from "../../components/modals/modal";
 
 interface IngredientImages {
-  [key: string]: { image: string; price: number };
+  [key: string]: { image: string; price: number; name: string };
 }
-
 function ProfileOrders() {
   const dispatch = useDispatch<AppDispatch>();
   const { orders, loading } = useSelector(
@@ -27,13 +26,21 @@ function ProfileOrders() {
   const [ingredientData, setIngredientData] = useState<IngredientImages>({});
 
   useEffect(() => {
-    async function loadIngredientData() {
-      const data = await fetchIngredientData();
-      setIngredientData(data);
-    }
-
+    const loadIngredientData = async () => {
+      try {
+        const data = await dispatch(fetchIngredientData()).unwrap();
+        const formattedData: IngredientImages = {};
+        data.forEach((ingredient) => {
+          formattedData[ingredient._id] = { image: ingredient.image, price: ingredient.price, name: ingredient.name };
+        });
+        setIngredientData(formattedData);
+      } catch (error) {
+        console.error("Failed to load ingredient data", error);
+      }
+    };
+  
     loadIngredientData();
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     dispatch(startConnection());
@@ -163,7 +170,7 @@ function ProfileOrders() {
       </ul>
       {selectedOrder && (
         <Modal isOpen={Boolean(selectedOrder)} handleClose={closeModal}>
-          <ProfileOrderDetails order={selectedOrder} />
+          <ProfileOrderDetails order={selectedOrder} ingredientData={ingredientData} />
         </Modal>
       )}
     </section>

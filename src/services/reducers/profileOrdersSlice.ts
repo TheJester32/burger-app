@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { BASE_URL } from '../../utils/api';
 
 export interface Order {
@@ -14,25 +14,32 @@ interface ProfileOrdersState {
     orders: Order[];
     loading: boolean;
     error: string | null;
+    ingredientData: { [key: string]: { image: string; price: number; name: string } };
 }
 
 const initialState: ProfileOrdersState = {
     orders: [],
     loading: false,
     error: null,
+    ingredientData: {},
 };
 
-export async function fetchIngredientData(): Promise<{ [key: string]: { image: string, price: number } }> {
+interface Ingredient {
+    name: string;
+    _id: string;
+    image: string;
+    price: number;
+}
+
+export const fetchIngredientData = createAsyncThunk<
+    Ingredient[],
+    void,
+    { rejectValue: string }
+>("orders/fetchIngredientData", async () => {
     const response = await fetch(`${BASE_URL}/ingredients`);
     const data = await response.json();
-    const ingredientMap: { [key: string]: { image: string, price: number } } = {};
-
-    data.data.forEach((ingredient: { _id: string, image: string, price: number }) => {
-        ingredientMap[ingredient._id] = { image: ingredient.image, price: ingredient.price };
-    });
-
-    return ingredientMap;
-}
+    return data.data;
+});
 
 const profileOrdersSlice = createSlice({
     name: 'profileOrders',
@@ -52,6 +59,30 @@ const profileOrdersSlice = createSlice({
         },
         startConnection(state) {},
         closeConnection(state) {},
+    },
+    extraReducers: (builder) => {
+        builder
+            .addCase(fetchIngredientData.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(fetchIngredientData.fulfilled, (state, action: PayloadAction<Ingredient[]>) => {
+                const ingredientData = action.payload.reduce((acc, ingredient) => {
+                    acc[ingredient._id] = {
+                        image: ingredient.image,
+                        price: ingredient.price,
+                        name: ingredient.name,
+                    };
+                    return acc;
+                }, {} as { [key: string]: { image: string; price: number; name: string } });
+
+                state.ingredientData = ingredientData;
+                state.loading = false;
+            })
+            .addCase(fetchIngredientData.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message || 'Ошибка при загрузке данных ингредиентов';
+            });
     },
 });
 
