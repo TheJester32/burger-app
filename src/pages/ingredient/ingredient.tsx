@@ -1,15 +1,14 @@
 import { useEffect } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
+import { useAppDispatch, useAppSelector } from "../../services/store/hooks";
 import { fetchIngredients } from '../../services/reducers/ingredientsSlice';
 import IngredientDetails from '../../components/modals/ingredientModal/ingredientDetails';
-import { AppDispatch, RootState } from '../../services/store/store';
 
 function IngredientPage() {
   const { id } = useParams();
-  const dispatch: AppDispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const location = useLocation();
-  const { allIngredients, loading, error } = useSelector((state: RootState) => state.ingredients);
+  const { allIngredients, loading, error } = useAppSelector((state) => state.ingredients);
 
   useEffect(() => {
     if (allIngredients.length === 0) {

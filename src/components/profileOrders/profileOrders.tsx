@@ -2,12 +2,11 @@ import React, { useEffect, useState } from "react";
 import feedStyles from "../feed/feed.module.css";
 import { useNavigate } from "react-router";
 import { CurrencyIcon } from "@ya.praktikum/react-developer-burger-ui-components";
-import { useDispatch, useSelector } from "react-redux";
+import { useAppDispatch, useAppSelector } from "../../services/store/hooks";
 import {
   fetchIngredientData,
   Order,
 } from "../../services/reducers/profileOrdersSlice";
-import { RootState, AppDispatch } from "../../services/store/store";
 import { ProfileOrderDetails } from "../modals/profileOrderModal/profileOrderDetails";
 import Modal from "../../components/modals/modal";
 
@@ -15,10 +14,8 @@ interface IngredientImages {
   [key: string]: { image: string; price: number; name: string };
 }
 function ProfileOrders() {
-  const dispatch = useDispatch<AppDispatch>();
-  const { orders, loading } = useSelector(
-    (state: RootState) => state.profileOrders
-  );
+  const dispatch = useAppDispatch();
+  const { orders, loading } = useAppSelector((state) => state.profileOrders);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [ingredientData, setIngredientData] = useState<IngredientImages>({});
   const navigate = useNavigate();

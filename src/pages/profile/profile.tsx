@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useAppDispatch, useAppSelector } from "../../services/store/hooks";
 import { useNavigate, useLocation } from "react-router-dom";
 import formStyles from "../form.module.css";
 import profileStyles from "./profile.module.css";
@@ -11,8 +11,6 @@ import {
   logoutUser,
   updateUserProfile,
 } from "../../services/reducers/userSlice";
-import { RootState } from "../../services/store/store";
-import { AppDispatch } from "../../services/store/store";
 import { ProfileOrders } from "../../components/profileOrders/profileOrders";
 
 function Profile() {
@@ -27,10 +25,10 @@ function Profile() {
   );
   const [isDirty, setIsDirty] = useState(false);
 
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const user = useSelector((state: RootState) => state.user.user);
+  const user = useAppSelector((state) => state.user.user);
 
   useEffect(() => {
     if (user) {

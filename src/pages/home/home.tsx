@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useAppDispatch, useAppSelector } from "../../services/store/hooks";
 import { BurgerIngredients } from '../../components/burgerIngredients/burgerIngredients';
 import { BurgerConstructor } from '../../components/burgerConstructor/burgerConstructor';
 import Modal from '../../components/modals/modal';
@@ -17,13 +17,12 @@ import {
   resetOrderNumber,
   clearConstructor
 } from '../../services/reducers/ingredientsSlice';
-import { RootState, AppDispatch } from '../../services/store/store';
 import { ingredientType } from '../../utils/tsTypes';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 
 export const HomePage = () => {
-  const dispatch: AppDispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const {
     allIngredients,
     buns,
@@ -32,7 +31,7 @@ export const HomePage = () => {
     orderNumber,
     loading,
     error
-  } = useSelector((state: RootState) => state.ingredients);
+  } = useAppSelector((state) => state.ingredients);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -106,7 +105,7 @@ export const HomePage = () => {
     dispatch(reorderConstructorIngredients({ fromIndex, toIndex }));
   };
 
-  const { isAuthentficated } = useSelector((state: RootState) => state.user);
+  const { isAuthentficated } = useAppSelector((state) => state.user);
 
   return (
     <>

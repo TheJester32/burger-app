@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import feedStyles from "./feed.module.css";
 import { CurrencyIcon } from "@ya.praktikum/react-developer-burger-ui-components";
@@ -7,18 +6,18 @@ import {
   fetchIngredientData,
   Order,
 } from "../../services/reducers/feedOrdersSlice";
-import { RootState, AppDispatch } from "../../services/store/store";
 import Modal from "../../components/modals/modal";
 import { FeedOrderDetails } from "../modals/feedOrderModal/feedOrderDetails";
 import { useLocation } from "react-router";
+import { useAppDispatch, useAppSelector } from "../../services/store/hooks";
 
 interface IngredientImages {
   [key: string]: { image: string; price: number; name: string };
 }
 
 function Feed() {
-  const dispatch = useDispatch<AppDispatch>();
-  const { orders, loading } = useSelector((state: RootState) => state.orders);
+  const dispatch = useAppDispatch();
+  const { orders, loading } = useAppSelector((state) => state.orders);
   const [ingredientData, setIngredientData] = useState<IngredientImages>({});
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const location = useLocation();
@@ -42,7 +41,6 @@ function Feed() {
       });
     };
   }, [dispatch]);
-  
 
   useEffect(() => {
     async function loadIngredientData() {
@@ -66,13 +64,13 @@ function Feed() {
     }
     loadIngredientData();
   }, [dispatch]);
-  
+
   const handleOrderClick = (order: Order): void => {
     setSelectedOrder(order);
     window.history.pushState({ modal: true }, "", `/feed/${order.number}`);
     location.pathname = `feed/${order.number}`;
   };
-  
+
   const calculateTotalPrice = (ingredientIds: string[]): number => {
     return ingredientIds.reduce((total, id) => {
       const ingredient = ingredientData[id];

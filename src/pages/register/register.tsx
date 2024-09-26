@@ -1,7 +1,6 @@
 import React, { useEffect, useState, ChangeEvent } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useAppDispatch, useAppSelector } from "../../services/store/hooks";
 import { registerUser, resetError } from '../../services/reducers/userSlice';
-import { RootState } from '../../services/store/store';
 import formStyles from '../form.module.css';
 import { Button, Input, PasswordInput } from '@ya.praktikum/react-developer-burger-ui-components';
 
@@ -10,8 +9,8 @@ function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const dispatch = useDispatch();
-  const { isLoading, error } = useSelector((state: RootState) => state.user);
+  const dispatch = useAppDispatch();
+  const { isLoading, error } = useAppSelector((state) => state.user);
 
   useEffect(() => {
     dispatch(resetError());

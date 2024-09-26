@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useAppDispatch, useAppSelector } from "../../services/store/hooks";
 import { useParams } from "react-router-dom";
-import { RootState, AppDispatch } from "../../services/store/store";
 import { fetchIngredientData } from "../../services/reducers/profileOrdersSlice";
 import { ProfileOrderDetails } from "../../components/modals/profileOrderModal/profileOrderDetails";
 
@@ -10,9 +9,9 @@ interface IngredientImages {
 }
 
 function ProfileOrderPage() {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
   const { number } = useParams();
-  const { orders, loading } = useSelector((state: RootState) => state.profileOrders);
+  const { orders, loading } = useAppSelector((state) => state.profileOrders);
   const [ingredientData, setIngredientData] = useState<IngredientImages>({});
 
   useEffect(() => {

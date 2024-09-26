@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useAppDispatch, useAppSelector } from "../../services/store/hooks";
 import { useParams } from "react-router-dom";
-import { RootState, AppDispatch } from "../../services/store/store";
 import {
   fetchIngredientData,
 } from "../../services/reducers/feedOrdersSlice";
@@ -12,9 +11,9 @@ interface IngredientImages {
 }
 
 function FeedOrderPage() {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
   const { number } = useParams();
-  const { orders, loading } = useSelector((state: RootState) => state.orders);
+  const { orders, loading } = useAppSelector((state) => state.orders);
   const [ingredientData, setIngredientData] = useState<IngredientImages>({});
 
   useEffect(() => {

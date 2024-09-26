@@ -1,12 +1,11 @@
 import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../services/store/store';
+import { useAppDispatch, useAppSelector } from "../../services/store/hooks";
 import { connectWebSocket, disconnectWebSocket } from '../../services/reducers/feedOrdersSlice';
 import feedStyles from './feed.module.css';
 
 function FeedStats() {
-  const dispatch = useDispatch();
-  const { orders, total, totalToday } = useSelector((state: RootState) => state.orders);
+  const dispatch = useAppDispatch();
+  const { orders, total, totalToday } = useAppSelector((state) => state.orders);
 
   useEffect(() => {
     dispatch(connectWebSocket());
