@@ -16,6 +16,26 @@ function FeedStats() {
     };
   }, [dispatch]);
 
+  useEffect(() => {
+    dispatch({
+      type: 'socket/connect',
+      payload: {
+        url: 'wss://norma.nomoreparties.space/orders/all',
+        actions: {
+          onOpen: (): any => ({ type: 'feedOrders/wsOpen' }),
+          onClose: (): any => ({ type: 'feedOrders/wsClose' }),
+          onMessage: (data: any): any => ({ type: 'feedOrders/wsMessage', payload: data }),
+        },
+      },
+    });
+    return () => {
+      dispatch({
+        type: 'socket/disconnect',
+      });
+    };
+  }, [dispatch]);
+  
+
   const readyOrders = orders.filter(order => order.status === 'done');
   const inWorkOrders = orders.filter(order => order.status !== 'done');
 

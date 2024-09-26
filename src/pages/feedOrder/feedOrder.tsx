@@ -3,8 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { RootState, AppDispatch } from "../../services/store/store";
 import {
-  connectWebSocket,
-  disconnectWebSocket,
   fetchIngredientData,
 } from "../../services/reducers/feedOrdersSlice";
 import { FeedOrderDetails } from "../../components/modals/feedOrderModal/feedOrderDetails";
@@ -51,12 +49,25 @@ function FeedOrderPage() {
   }, [dispatch]);
 
   useEffect(() => {
-    dispatch(connectWebSocket());
+    dispatch({
+      type: 'socket/connect',
+      payload: {
+        url: 'wss://norma.nomoreparties.space/orders/all',
+        actions: {
+          onOpen: (): any => ({ type: 'feedOrders/wsOpen' }),
+          onClose: (): any => ({ type: 'feedOrders/wsClose' }),
+          onMessage: (data: any): any => ({ type: 'feedOrders/wsMessage', payload: data }),
+        },
+      },
+    });
     return () => {
-      dispatch(disconnectWebSocket());
+      dispatch({
+        type: 'socket/disconnect',
+      });
     };
   }, [dispatch]);
-
+  
+  
   if (loading) {
     return <p>Загрузка заказа...</p>;
   }

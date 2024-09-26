@@ -57,8 +57,15 @@ const profileOrdersSlice = createSlice({
         clearOrders(state) {
             state.orders = [];
         },
-        startConnection(state) {},
-        closeConnection(state) {},
+        startConnection(state) {
+            state.loading = true;
+        },
+        closeConnection(state) {
+            state.loading = false;
+        },
+        updateOrders(state, action: PayloadAction<Order[]>) {
+            state.orders = action.payload;
+        }
     },
     extraReducers: (builder) => {
         builder
@@ -86,5 +93,5 @@ const profileOrdersSlice = createSlice({
     },
 });
 
-export const { setOrders, setLoading, setError, clearOrders, startConnection, closeConnection } = profileOrdersSlice.actions;
+export const { setOrders, setLoading, setError, clearOrders, startConnection, closeConnection, updateOrders } = profileOrdersSlice.actions;
 export default profileOrdersSlice.reducer;

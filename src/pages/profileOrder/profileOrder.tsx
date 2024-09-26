@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { RootState, AppDispatch } from "../../services/store/store";
-import { startConnection, closeConnection, fetchIngredientData } from "../../services/reducers/profileOrdersSlice";
+import { fetchIngredientData } from "../../services/reducers/profileOrdersSlice";
 import { ProfileOrderDetails } from "../../components/modals/profileOrderModal/profileOrderDetails";
 
 interface IngredientImages {
@@ -38,11 +38,27 @@ function ProfileOrderPage() {
   }, [dispatch]);
 
   useEffect(() => {
-    dispatch(startConnection());
+    const accessToken = localStorage.getItem("accessToken")?.split(" ")[1];
+  
+    dispatch({
+      type: 'socket/connect',
+      payload: {
+        url: 'wss://norma.nomoreparties.space/orders',
+        token: accessToken,
+        actions: {
+          onOpen: (): any => ({ type: 'feedOrders/wsOpen' }),
+          onClose: (): any => ({ type: 'feedOrders/wsClose' }),
+          onMessage: (data: any): any => ({ type: 'feedOrders/wsMessage', payload: data }),
+        },
+      },
+    });
     return () => {
-      dispatch(closeConnection());
+      dispatch({
+        type: 'socket/disconnect',
+      });
     };
   }, [dispatch]);
+  
 
   if (loading) {
     return <p>Загрузка заказа...</p>;

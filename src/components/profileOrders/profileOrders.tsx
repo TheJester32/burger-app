@@ -5,8 +5,6 @@ import { CurrencyIcon } from "@ya.praktikum/react-developer-burger-ui-components
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchIngredientData,
-  startConnection,
-  closeConnection,
   Order,
 } from "../../services/reducers/profileOrdersSlice";
 import { RootState, AppDispatch } from "../../services/store/store";
@@ -22,8 +20,8 @@ function ProfileOrders() {
     (state: RootState) => state.profileOrders
   );
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
-
   const [ingredientData, setIngredientData] = useState<IngredientImages>({});
+  const navigate = useNavigate();
 
   useEffect(() => {
     const loadIngredientData = async () => {
@@ -43,12 +41,27 @@ function ProfileOrders() {
   }, [dispatch]);
 
   useEffect(() => {
-    dispatch(startConnection());
-
+    const accessToken = localStorage.getItem("accessToken")?.split(" ")[1];
+  
+    dispatch({
+      type: 'socket/connect',
+      payload: {
+        url: 'wss://norma.nomoreparties.space/orders',
+        token: accessToken,
+        actions: {
+          onOpen: (): any => ({ type: 'feedOrders/wsOpen' }),
+          onClose: (): any => ({ type: 'feedOrders/wsClose' }),
+          onMessage: (data: any): any => ({ type: 'feedOrders/wsMessage', payload: data }),
+        },
+      },
+    });
     return () => {
-      dispatch(closeConnection());
+      dispatch({
+        type: 'socket/disconnect',
+      });
     };
   }, [dispatch]);
+  
 
   const calculateTotalPrice = (ingredientIds: string[]) => {
     return ingredientIds.reduce((total, id) => {
@@ -56,8 +69,6 @@ function ProfileOrders() {
       return ingredient ? total + ingredient.price : total;
     }, 0);
   };
-
-  const navigate = useNavigate();
 
   const handleOrderClick = (order: Order) => {
     setSelectedOrder(order);

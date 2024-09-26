@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction, createAsyncThunk, createAction } from "@reduxjs/toolkit";
 import { BASE_URL } from "../../utils/api";
 
 export interface Order {
@@ -43,6 +43,13 @@ interface SetOrdersPayload {
   totalToday: number;
 }
 
+interface WsMessagePayload {
+  orders: Order[];
+  total: number;
+  totalToday: number;
+}
+export const wsMessageAction = createAction<WsMessagePayload>('feedOrders/wsMessage');
+
 export const fetchIngredientData = createAsyncThunk<
   Ingredient[],
   void,
@@ -77,6 +84,13 @@ const ordersSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+    .addCase(wsMessageAction, (state, action) => {
+      const { orders, total, totalToday } = action.payload;
+      state.orders = orders;
+      state.total = total;
+      state.totalToday = totalToday;
+      state.loading = false;
+    })
       .addCase(fetchIngredientData.pending, (state) => {
         state.ingredientsLoading = true;
       })

@@ -4,8 +4,6 @@ import { useNavigate } from "react-router";
 import feedStyles from "./feed.module.css";
 import { CurrencyIcon } from "@ya.praktikum/react-developer-burger-ui-components";
 import {
-  connectWebSocket,
-  disconnectWebSocket,
   fetchIngredientData,
   Order,
 } from "../../services/reducers/feedOrdersSlice";
@@ -24,6 +22,27 @@ function Feed() {
   const [ingredientData, setIngredientData] = useState<IngredientImages>({});
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    dispatch({
+      type: 'socket/connect',
+      payload: {
+        url: 'wss://norma.nomoreparties.space/orders/all',
+        actions: {
+          onOpen: (): any => ({ type: 'feedOrders/wsOpen' }),
+          onClose: (): any => ({ type: 'feedOrders/wsClose' }),
+          onMessage: (data: any): any => ({ type: 'feedOrders/wsMessage', payload: data }),
+        },
+      },
+    });
+    return () => {
+      dispatch({
+        type: 'socket/disconnect',
+      });
+    };
+  }, [dispatch]);
+  
 
   useEffect(() => {
     async function loadIngredientData() {
@@ -47,27 +66,18 @@ function Feed() {
     }
     loadIngredientData();
   }, [dispatch]);
-
-  useEffect(() => {
-    dispatch(connectWebSocket());
-    return () => {
-      dispatch(disconnectWebSocket());
-    };
-  }, [dispatch]);
-
-  const calculateTotalPrice = (ingredientIds: string[]) => {
+  
+  const handleOrderClick = (order: Order): void => {
+    setSelectedOrder(order);
+    window.history.pushState({ modal: true }, "", `/feed/${order.number}`);
+    location.pathname = `feed/${order.number}`;
+  };
+  
+  const calculateTotalPrice = (ingredientIds: string[]): number => {
     return ingredientIds.reduce((total, id) => {
       const ingredient = ingredientData[id];
       return ingredient ? total + ingredient.price : total;
     }, 0);
-  };
-
-  const navigate = useNavigate();
-
-  const handleOrderClick = (order: Order) => {
-    setSelectedOrder(order);
-    window.history.pushState({ modal: true }, "", `/feed/${order.number}`);
-    location.pathname = `feed/${order.number}`;
   };
 
   const closeModal = () => {
