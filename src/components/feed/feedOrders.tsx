@@ -43,7 +43,7 @@ function Feed() {
 
   const calculateTotalPrice = (ingredientIds: string[]): number => {
     return ingredientIds.reduce((total, id) => {
-      const ingredient = ingredientData.find((item) => item._id === id); // Исправлено
+      const ingredient = ingredientData.find((item) => item._id === id);
       return ingredient ? total + ingredient.price : total;
     }, 0);
   };

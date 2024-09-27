@@ -1,5 +1,4 @@
-import { createSlice, PayloadAction, createAsyncThunk, createAction } from "@reduxjs/toolkit";
-import { BASE_URL } from "../../utils/api";
+import { createSlice, PayloadAction, createAction } from "@reduxjs/toolkit";
 
 export interface Order {
   _id: string;
@@ -8,13 +7,6 @@ export interface Order {
   name: string;
   ingredients: string[];
   status: string;
-}
-
-interface Ingredient {
-  name: string;
-  _id: string;
-  image: string;
-  price: number;
 }
 
 interface OrdersState {
@@ -50,16 +42,6 @@ interface WsMessagePayload {
 }
 export const wsMessageAction = createAction<WsMessagePayload>('feedOrders/wsMessage');
 
-export const fetchIngredientData = createAsyncThunk<
-  Ingredient[],
-  void,
-  { rejectValue: string }
->("orders/fetchIngredientData", async () => {
-  const response = await fetch(`${BASE_URL}/ingredients`);
-  const data = await response.json();
-  return data.data;
-});
-
 const ordersSlice = createSlice({
   name: "orders",
   initialState,
@@ -75,12 +57,6 @@ const ordersSlice = createSlice({
     setError(state, action: PayloadAction<string | null>) {
       state.error = action.payload;
     },
-    connectWebSocket(state) {
-      state.loading = true;
-    },
-    disconnectWebSocket(state) {
-      state.loading = false;
-    },
   },
   extraReducers: (builder) => {
     builder
@@ -91,28 +67,6 @@ const ordersSlice = createSlice({
       state.totalToday = totalToday;
       state.loading = false;
     })
-      .addCase(fetchIngredientData.pending, (state) => {
-        state.ingredientsLoading = true;
-      })
-      .addCase(fetchIngredientData.fulfilled, (state, action) => {
-        const ingredientMap: {
-          [key: string]: { image: string; price: number };
-        } = {};
-        action.payload.forEach((ingredient) => {
-          ingredientMap[ingredient._id] = {
-            image: ingredient.image,
-            price: ingredient.price,
-          };
-        });
-
-        state.ingredients = ingredientMap;
-        state.ingredientsLoading = false;
-      })
-      .addCase(fetchIngredientData.rejected, (state, action) => {
-        state.ingredientsLoading = false;
-        state.error =
-          action.error.message || "Ошибка при загрузке ингредиентов";
-      });
   },
 });
 
@@ -120,7 +74,5 @@ export const {
   setOrders,
   setLoading,
   setError,
-  connectWebSocket,
-  disconnectWebSocket,
 } = ordersSlice.actions;
 export default ordersSlice.reducer;

@@ -1,19 +1,10 @@
 import React, { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from "../../services/store/hooks";
-import { connectWebSocket, disconnectWebSocket } from '../../services/reducers/feedOrdersSlice';
 import feedStyles from './feed.module.css';
 
 function FeedStats() {
   const dispatch = useAppDispatch();
   const { orders, total, totalToday } = useAppSelector((state) => state.orders);
-
-  useEffect(() => {
-    dispatch(connectWebSocket());
-
-    return () => {
-      dispatch(disconnectWebSocket());
-    };
-  }, [dispatch]);
 
   useEffect(() => {
     dispatch({

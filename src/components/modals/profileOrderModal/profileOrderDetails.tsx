@@ -1,14 +1,11 @@
 import { Order } from "../../../services/reducers/feedOrdersSlice";
 import orderDetailsStyles from "../feedOrderModal/feedOrderDetails.module.css";
 import { CurrencyIcon } from "@ya.praktikum/react-developer-burger-ui-components";
-
-interface IngredientImages {
-  [key: string]: { image: string; price: number; name: string };
-}
+import { ingredientType } from "../../../utils/tsTypes";
 
 interface OrderProps {
   order: Order;
-  ingredientData: IngredientImages;
+  ingredientData: ingredientType[];
 }
 
 function ProfileOrderDetails({ order, ingredientData }: OrderProps) {
@@ -30,7 +27,7 @@ function ProfileOrderDetails({ order, ingredientData }: OrderProps) {
 
   const calculateTotalPrice = () => {
     return Object.entries(ingredientCounts).reduce((total, [id, count]) => {
-      const ingredient = ingredientData[id];
+      const ingredient = ingredientData.find((ingredient) => ingredient._id === id);
       return ingredient ? total + ingredient.price * count : total;
     }, 0);
   };
@@ -71,35 +68,34 @@ function ProfileOrderDetails({ order, ingredientData }: OrderProps) {
         </p>
         <h4 className="text text_type_main-medium">Состав:</h4>
         <ul className={`${orderDetailsStyles.orderDetails_list} custom-scroll`}>
-          {Object.entries(ingredientCounts).map(([ingredientId, count]) => (
-            <li key={ingredientId}>
-              <div className={orderDetailsStyles.orderDetails_img_wrapper}>
-                <img
-                  src={ingredientData[ingredientId]?.image}
-                  alt="Ингредиент"
-                />
-              </div>
-              <h4
-                className="text text_type_main-medium"
-                style={{ width: "100%", maxWidth: '500px' }}
-              >
-                {ingredientData[ingredientId]?.name}
-              </h4>
-              <p
-                className="text text_type_digits-default"
-              >
-                x{count}
-              </p>
-              <div className={orderDetailsStyles.orderDetails_count_wrapper}>
-                <p
-                  className="text text_type_digits-default"
+          {Object.entries(ingredientCounts).map(([ingredientId, count]) => {
+            const ingredient = ingredientData.find(
+              (ingredient) => ingredient._id === ingredientId
+            );
+
+            if (!ingredient) return null;
+
+            return (
+              <li key={ingredientId}>
+                <div className={orderDetailsStyles.orderDetails_img_wrapper}>
+                  <img src={ingredient.image} alt="Ингредиент" />
+                </div>
+                <h4
+                  className="text text_type_main-medium"
+                  style={{ width: "100%", maxWidth: '500px' }}
                 >
-                  {ingredientData[ingredientId]?.price * count}
-                </p>
-                <CurrencyIcon type="primary" />
-              </div>
-            </li>
-          ))}
+                  {ingredient.name}
+                </h4>
+                <p className="text text_type_digits-default">x{count}</p>
+                <div className={orderDetailsStyles.orderDetails_count_wrapper}>
+                  <p className="text text_type_digits-default">
+                    {ingredient.price * count}
+                  </p>
+                  <CurrencyIcon type="primary" />
+                </div>
+              </li>
+            );
+          })}
         </ul>
         <div className={orderDetailsStyles.orderDetails_lower_wrapper}>
           <p className="text text_type_digits-default text_color_inactive">
