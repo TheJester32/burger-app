@@ -1,7 +1,6 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../services/store/store';
+import { useAppSelector } from '../../services/store/hooks';
 
 interface RouteGuardProps {
   element: React.ReactElement;
@@ -9,7 +8,7 @@ interface RouteGuardProps {
 }
 
 const RouteGuard: React.FC<RouteGuardProps> = ({ element, isProtected }) => {
-  const { isAuthentficated } = useSelector((state: RootState) => state.user);
+  const { isAuthentficated } = useAppSelector((state) => state.user);
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";
 

@@ -2,14 +2,13 @@ import React from "react";
 import appStyles from "../../components/app/app.module.css";
 import { Feed } from '../../components/feed/feedOrders';
 import { FeedStats } from "../../components/feed/feedStats";
-import { useSelector } from 'react-redux';
-import { RootState } from '../../services/store/store';
+import { useAppSelector } from "../../services/store/hooks";
 
 function FeedPage() {
     const {
       loading,
       error
-    } = useSelector((state: RootState) => state.ingredients);
+    } = useAppSelector((state) => state.ingredients);
 
   return (
     <>

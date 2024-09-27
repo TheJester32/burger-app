@@ -3,8 +3,7 @@ import { useDrop, useDrag, DropTargetMonitor } from 'react-dnd';
 import { CurrencyIcon, LockIcon, DragIcon, DeleteIcon, Button } from '@ya.praktikum/react-developer-burger-ui-components';
 import burgerConstructorStyles from './burgerConstructor.module.css';
 import { ingredientType  } from '../../utils/tsTypes';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../services/store/store';
+import { useAppSelector } from '../../services/store/hooks';
 import { useNavigate } from 'react-router-dom';
 
 interface IngredientItemProps {
@@ -85,7 +84,7 @@ const BurgerConstructor: React.FC<BurgerConstructorProps> = ({
     handleReorder(fromIndex, toIndex);
   };
 
-  const { isAuthentficated } = useSelector((state: RootState) => state.user);
+  const { isAuthentficated } = useAppSelector((state) => state.user);
   const navigate = useNavigate();
 
   const handleRedirectToLogin = () => {
