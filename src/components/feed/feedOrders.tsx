@@ -2,23 +2,16 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import feedStyles from "./feed.module.css";
 import { CurrencyIcon } from "@ya.praktikum/react-developer-burger-ui-components";
-import {
-  fetchIngredientData,
-  Order,
-} from "../../services/reducers/feedOrdersSlice";
+import { Order } from "../../services/reducers/feedOrdersSlice";
 import Modal from "../../components/modals/modal";
 import { FeedOrderDetails } from "../modals/feedOrderModal/feedOrderDetails";
 import { useLocation } from "react-router";
 import { useAppDispatch, useAppSelector } from "../../services/store/hooks";
 
-interface IngredientImages {
-  [key: string]: { image: string; price: number; name: string };
-}
-
 function Feed() {
   const dispatch = useAppDispatch();
   const { orders, loading } = useAppSelector((state) => state.orders);
-  const [ingredientData, setIngredientData] = useState<IngredientImages>({});
+  const ingredientData = useAppSelector((state) => state.ingredients.allIngredients);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const location = useLocation();
   const navigate = useNavigate();
@@ -42,29 +35,6 @@ function Feed() {
     };
   }, [dispatch]);
 
-  useEffect(() => {
-    async function loadIngredientData() {
-      try {
-        const ingredients = await dispatch(fetchIngredientData()).unwrap();
-        const ingredientMap: IngredientImages = ingredients.reduce(
-          (acc: IngredientImages, ingredient) => ({
-            ...acc,
-            [ingredient._id]: {
-              image: ingredient.image,
-              price: ingredient.price,
-              name: ingredient.name
-            }
-          }),
-          {}
-        );
-        setIngredientData(ingredientMap);
-      } catch (error) {
-        console.error("Ошибка при загрузке данных ингредиентов", error);
-      }
-    }
-    loadIngredientData();
-  }, [dispatch]);
-
   const handleOrderClick = (order: Order): void => {
     setSelectedOrder(order);
     window.history.pushState({ modal: true }, "", `/feed/${order.number}`);
@@ -73,7 +43,7 @@ function Feed() {
 
   const calculateTotalPrice = (ingredientIds: string[]): number => {
     return ingredientIds.reduce((total, id) => {
-      const ingredient = ingredientData[id];
+      const ingredient = ingredientData.find((item) => item._id === id); // Исправлено
       return ingredient ? total + ingredient.price : total;
     }, 0);
   };
@@ -122,18 +92,23 @@ function Feed() {
             </h4>
             <div className={feedStyles.feed__list_inner_wrapper}>
               <div className={feedStyles.feed__list_ingredients}>
-                {order.ingredients.slice(0, 5).map((ingredientId, idx) => (
-                  <div
-                    className={feedStyles.feed__list_ingredient_img_wrapper}
-                    key={idx}
-                  >
-                    <img
-                      className={feedStyles.feed__list_ingredient_img}
-                      src={ingredientData[ingredientId]?.image}
-                      alt="Ингредиент."
-                    />
-                  </div>
-                ))}
+                {order.ingredients.slice(0, 5).map((ingredientId, idx) => {
+                  const ingredient = ingredientData.find((item) => item._id === ingredientId); // Исправлено
+                  return (
+                    <div
+                      className={feedStyles.feed__list_ingredient_img_wrapper}
+                      key={idx}
+                    >
+                      {ingredient && (
+                        <img
+                          className={feedStyles.feed__list_ingredient_img}
+                          src={ingredient.image}
+                          alt={ingredient.name}
+                        />
+                      )}
+                    </div>
+                  );
+                })}
                 {order.ingredients.length > 5 && (
                   <div
                     className={
@@ -142,7 +117,11 @@ function Feed() {
                   >
                     <img
                       className={feedStyles.feed__list_ingredient_img}
-                      src={ingredientData[order.ingredients[5]]?.image}
+                      src={
+                        ingredientData.find(
+                          (item) => item._id === order.ingredients[5]
+                        )?.image
+                      }
                       alt="Ингредиент."
                     />
                     <span

@@ -7,7 +7,6 @@ import appStyles from '../../components/app/app.module.css';
 import IngredientDetails from '../../components/modals/ingredientModal/ingredientDetails';
 import OrderDetails from '../../components/modals/orderModal/orderDetails';
 import {
-  fetchIngredients,
   setViewedIngredient,
   createOrder,
   setBun,
@@ -35,10 +34,6 @@ export const HomePage = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
-
-  useEffect(() => {
-    dispatch(fetchIngredients());
-  }, [dispatch]);
 
   const handleIngredientDetailsOpen = (ingredient: ingredientType | null) => {
     if (ingredient) {

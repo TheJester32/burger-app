@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../services/store/hooks";
 import { useParams } from "react-router-dom";
-import { fetchIngredientData } from "../../services/reducers/profileOrdersSlice";
+import { fetchIngredientData } from "../../services/reducers/feedOrdersSlice";
 import { ProfileOrderDetails } from "../../components/modals/profileOrderModal/profileOrderDetails";
 
 interface IngredientImages {

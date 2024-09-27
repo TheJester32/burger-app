@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { useLocation, Routes, Route, Navigate } from "react-router-dom";
@@ -15,13 +15,18 @@ import { ProfileOrderPage } from "../../pages/profileOrder/profileOrder";
 import { IngredientPage } from "../../pages/ingredient/ingredient";
 import { RouteGuard } from "../routes/protectedRouteElement";
 import { FeedOrderPage } from "../../pages/feedOrder/feedOrder";
-import { useSelector } from "react-redux";
-import { RootState } from "../../services/store/store";
+import { useAppDispatch, useAppSelector } from "../../services/store/hooks";
+import { fetchIngredients } from "../../services/reducers/ingredientsSlice";
 
 function App() {
   const location = useLocation();
   const background = location.state && location.state.modal;
-  const { isAuthentficated } = useSelector((state: RootState) => state.user);
+  const { isAuthentficated } = useAppSelector((state) => state.user);
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(fetchIngredients());
+  }, [dispatch]);
 
   return (
     <DndProvider backend={HTML5Backend}>

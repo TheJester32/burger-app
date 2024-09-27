@@ -3,10 +3,8 @@ import feedStyles from "../feed/feed.module.css";
 import { useNavigate } from "react-router";
 import { CurrencyIcon } from "@ya.praktikum/react-developer-burger-ui-components";
 import { useAppDispatch, useAppSelector } from "../../services/store/hooks";
-import {
-  fetchIngredientData,
-  Order,
-} from "../../services/reducers/profileOrdersSlice";
+import { Order } from "../../services/reducers/profileOrdersSlice";
+import {   fetchIngredientData } from '../../services/reducers/feedOrdersSlice'
 import { ProfileOrderDetails } from "../modals/profileOrderModal/profileOrderDetails";
 import Modal from "../../components/modals/modal";
 
@@ -26,39 +24,45 @@ function ProfileOrders() {
         const data = await dispatch(fetchIngredientData()).unwrap();
         const formattedData: IngredientImages = {};
         data.forEach((ingredient) => {
-          formattedData[ingredient._id] = { image: ingredient.image, price: ingredient.price, name: ingredient.name };
+          formattedData[ingredient._id] = {
+            image: ingredient.image,
+            price: ingredient.price,
+            name: ingredient.name,
+          };
         });
         setIngredientData(formattedData);
       } catch (error) {
         console.error("Failed to load ingredient data", error);
       }
     };
-  
+
     loadIngredientData();
   }, [dispatch]);
 
   useEffect(() => {
     const accessToken = localStorage.getItem("accessToken")?.split(" ")[1];
-  
+
     dispatch({
-      type: 'socket/connect',
+      type: "socket/connect",
       payload: {
-        url: 'wss://norma.nomoreparties.space/orders',
+        url: "wss://norma.nomoreparties.space/orders",
         token: accessToken,
         actions: {
-          onOpen: (): any => ({ type: 'feedOrders/wsOpen' }),
-          onClose: (): any => ({ type: 'feedOrders/wsClose' }),
-          onMessage: (data: any): any => ({ type: 'feedOrders/wsMessage', payload: data }),
+          onOpen: (): any => ({ type: "feedOrders/wsOpen" }),
+          onClose: (): any => ({ type: "feedOrders/wsClose" }),
+          onMessage: (data: any): any => ({
+            type: "feedOrders/wsMessage",
+            payload: data,
+          }),
         },
       },
     });
     return () => {
       dispatch({
-        type: 'socket/disconnect',
+        type: "socket/disconnect",
       });
     };
   }, [dispatch]);
-  
 
   const calculateTotalPrice = (ingredientIds: string[]) => {
     return ingredientIds.reduce((total, id) => {
@@ -69,12 +73,16 @@ function ProfileOrders() {
 
   const handleOrderClick = (order: Order) => {
     setSelectedOrder(order);
-    window.history.pushState({ modal: true }, '', `/profile/orders/${order.number}`);
+    window.history.pushState(
+      { modal: true },
+      "",
+      `/profile/orders/${order.number}`
+    );
   };
 
   const closeModal = () => {
     setSelectedOrder(null);
-    navigate('/profile/orders');
+    navigate("/profile/orders");
   };
 
   if (loading)
@@ -96,7 +104,11 @@ function ProfileOrders() {
         {[...orders]
           .sort((a, b) => b.number - a.number)
           .map((order) => (
-            <li key={order._id} onClick={() => handleOrderClick(order)} style={{ cursor: "pointer" }}>
+            <li
+              key={order._id}
+              onClick={() => handleOrderClick(order)}
+              style={{ cursor: "pointer" }}
+            >
               <div className={feedStyles.feed__list_inner_wrapper}>
                 <p
                   className={`text text_type_digits-default ${feedStyles.feed__list_number}`}
@@ -149,7 +161,9 @@ function ProfileOrders() {
                   ))}
                   {order.ingredients.length > 5 && (
                     <div
-                      className={feedStyles.feed__list_ingredient_img_more_wrapper}
+                      className={
+                        feedStyles.feed__list_ingredient_img_more_wrapper
+                      }
                     >
                       <img
                         className={feedStyles.feed__list_ingredient_img}
@@ -178,7 +192,10 @@ function ProfileOrders() {
       </ul>
       {selectedOrder && (
         <Modal isOpen={Boolean(selectedOrder)} handleClose={closeModal}>
-          <ProfileOrderDetails order={selectedOrder} ingredientData={ingredientData} />
+          <ProfileOrderDetails
+            order={selectedOrder}
+            ingredientData={ingredientData}
+          />
         </Modal>
       )}
     </section>

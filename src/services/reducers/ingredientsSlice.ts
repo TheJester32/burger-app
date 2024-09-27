@@ -3,6 +3,7 @@ import { ingredientType } from '../../utils/tsTypes';
 import { BASE_URL, checkResponse } from '../../utils/api';
 
 interface IngredientsState {
+  items: any;
   allIngredients: ingredientType[];
   buns: ingredientType[];
   constructorIngredients: ingredientType[];
@@ -22,6 +23,7 @@ const initialState: IngredientsState = {
   orderNumber: null,
   loading: false,
   error: null,
+  items: []
 };
 
 export const fetchIngredients = createAsyncThunk('ingredients/fetchIngredients', async () => {

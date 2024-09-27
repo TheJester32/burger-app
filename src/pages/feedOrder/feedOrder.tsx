@@ -1,51 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../services/store/hooks";
 import { useParams } from "react-router-dom";
-import {
-  fetchIngredientData,
-} from "../../services/reducers/feedOrdersSlice";
 import { FeedOrderDetails } from "../../components/modals/feedOrderModal/feedOrderDetails";
-
-interface IngredientImages {
-  [key: string]: { image: string; price: number; name: string };
-}
 
 function FeedOrderPage() {
   const dispatch = useAppDispatch();
   const { number } = useParams();
   const { orders, loading } = useAppSelector((state) => state.orders);
-  const [ingredientData, setIngredientData] = useState<IngredientImages>({});
-
-  useEffect(() => {
-    async function loadIngredientData() {
-      try {
-        const ingredients = await dispatch(fetchIngredientData()).unwrap();
-        const ingredientMap: IngredientImages = ingredients.reduce(
-          (
-            acc: IngredientImages,
-            ingredient: {
-              _id: string;
-              image: string;
-              price: number;
-              name: string;
-            }
-          ) => ({
-            ...acc,
-            [ingredient._id]: {
-              image: ingredient.image,
-              price: ingredient.price,
-              name: ingredient.name,
-            },
-          }),
-          {} as IngredientImages
-        );
-        setIngredientData(ingredientMap);
-      } catch (error) {
-        console.error("Ошибка при загрузке данных ингредиентов", error);
-      }
-    }
-    loadIngredientData();
-  }, [dispatch]);
+  const ingredientData = useAppSelector((state) => state.ingredients.allIngredients);
 
   useEffect(() => {
     dispatch({
@@ -65,8 +27,7 @@ function FeedOrderPage() {
       });
     };
   }, [dispatch]);
-  
-  
+
   if (loading) {
     return <p>Загрузка заказа...</p>;
   }
@@ -87,6 +48,7 @@ function FeedOrderPage() {
           maxWidth: "900px",
         }}
       >
+
         <FeedOrderDetails order={order} ingredientData={ingredientData} />
       </div>
     </div>
