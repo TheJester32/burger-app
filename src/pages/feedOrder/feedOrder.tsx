@@ -2,28 +2,34 @@ import React, { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../services/store/hooks";
 import { useParams } from "react-router-dom";
 import { FeedOrderDetails } from "../../components/modals/feedOrderModal/feedOrderDetails";
+import feedStyles from "../../components/feed/feed.module.css";
 
 function FeedOrderPage() {
   const dispatch = useAppDispatch();
   const { number } = useParams();
   const { orders, loading } = useAppSelector((state) => state.orders);
-  const ingredientData = useAppSelector((state) => state.ingredients.allIngredients);
+  const ingredientData = useAppSelector(
+    (state) => state.ingredients.allIngredients
+  );
 
   useEffect(() => {
     dispatch({
-      type: 'socket/connect',
+      type: "socket/connect",
       payload: {
-        url: 'wss://norma.nomoreparties.space/orders/all',
+        url: "wss://norma.nomoreparties.space/orders/all",
         actions: {
-          onOpen: (): any => ({ type: 'feedOrders/wsOpen' }),
-          onClose: (): any => ({ type: 'feedOrders/wsClose' }),
-          onMessage: (data: any): any => ({ type: 'feedOrders/wsMessage', payload: data }),
+          onOpen: (): any => ({ type: "feedOrders/wsOpen" }),
+          onClose: (): any => ({ type: "feedOrders/wsClose" }),
+          onMessage: (data: any): any => ({
+            type: "feedOrders/wsMessage",
+            payload: data,
+          }),
         },
       },
     });
     return () => {
       dispatch({
-        type: 'socket/disconnect',
+        type: "socket/disconnect",
       });
     };
   }, [dispatch]);
@@ -39,16 +45,8 @@ function FeedOrderPage() {
   }
 
   return (
-    <div style={{ display: "flex", justifyContent: "center" }}>
-      <div
-        style={{
-          display: "flex",
-          marginTop: "3rem",
-          flexDirection: "column",
-          maxWidth: "900px",
-        }}
-      >
-
+    <div className={feedStyles.order_container}>
+      <div className={feedStyles.order_container_inner}>
         <FeedOrderDetails order={order} ingredientData={ingredientData} />
       </div>
     </div>

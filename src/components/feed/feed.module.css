@@ -12,11 +12,16 @@
     cursor: pointer;
     list-style-type: none;
     background-color: rgba(28, 28, 33, 1);
+    border: 1px solid rgba(28, 28, 33, 1);
     border-radius: 40px;
     padding: 24px;
     margin-bottom: 1rem;
     height: auto;
     min-width: 530px;
+}
+
+.feed__list li:hover {
+    border: 1px solid #5AC9CA;
 }
 
 .feed__list_name {
@@ -139,4 +144,22 @@
 
 .feedStats__total_wrapper {
     padding: 2rem 0;
+}
+
+.feed_loading {
+    color: "#04CCCC";
+    font-weight: "bolder";
+    text-align: "center";
+}
+
+.order_container {
+    display: flex;
+    justify-content: center;
+}
+
+.order_container_inner{
+    display: flex;
+    margin-top: 3rem;
+    flex-direction: column;
+    max-width: 900px;
 }

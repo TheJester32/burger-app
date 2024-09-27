@@ -49,13 +49,21 @@
     position: relative;
 }
 
-.constructor__element_price_wrapper{
+.constructor__element_price_wrapper {
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0.5rem 0;
 }
 
-.constructor__element_price{
+.constructor__element_price {
     margin-right: 1rem;
+}
+
+.single_ingredient_page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    margin-top: 6rem;
 }

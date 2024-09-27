@@ -27,7 +27,9 @@ function ProfileOrderDetails({ order, ingredientData }: OrderProps) {
 
   const calculateTotalPrice = () => {
     return Object.entries(ingredientCounts).reduce((total, [id, count]) => {
-      const ingredient = ingredientData.find((ingredient) => ingredient._id === id);
+      const ingredient = ingredientData.find(
+        (ingredient) => ingredient._id === id
+      );
       return ingredient ? total + ingredient.price * count : total;
     }, 0);
   };
@@ -36,14 +38,12 @@ function ProfileOrderDetails({ order, ingredientData }: OrderProps) {
     <>
       <p
         className={`text text_type_digits-default ${orderDetailsStyles.orderDetails_number}`}
-        style={{ marginTop: "1rem" }}
       >
         #{order.number}
       </p>
       <div className={`${orderDetailsStyles.orderDetails_inner_wrapper}`}>
         <p
           className={`text text_type_main-medium ${orderDetailsStyles.orderDetails_name}`}
-          style={{ width: "100%", maxWidth: "600px" }}
         >
           {order.name}
         </p>
@@ -81,8 +81,7 @@ function ProfileOrderDetails({ order, ingredientData }: OrderProps) {
                   <img src={ingredient.image} alt="Ингредиент" />
                 </div>
                 <h4
-                  className="text text_type_main-medium"
-                  style={{ width: "100%", maxWidth: '500px' }}
+                  className={`text text_type_main-medium ${orderDetailsStyles.orderDetails_img_name}`}
                 >
                   {ingredient.name}
                 </h4>
@@ -102,10 +101,7 @@ function ProfileOrderDetails({ order, ingredientData }: OrderProps) {
             {new Date(order.createdAt).toLocaleString()}
           </p>
           <div className={`${orderDetailsStyles.orderDetails_price_wrapper}`}>
-            <p
-              className="text text_type_digits-default"
-              style={{ marginRight: "1rem" }}
-            >
+            <p className="text text_type_digits-default">
               {calculateTotalPrice()}
             </p>
             <CurrencyIcon type="primary" />

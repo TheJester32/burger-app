@@ -56,9 +56,7 @@ function Feed() {
 
   if (loading)
     return (
-      <p
-        style={{ color: "#04CCCC", fontWeight: "bolder", textAlign: "center" }}
-      >
+      <p className={`${feedStyles.feed_loading}`}>
         Загрузка заказов
       </p>
     );

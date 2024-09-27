@@ -62,13 +62,7 @@ function ProfileOrders() {
 
   if (loading)
     return (
-      <p
-        style={{
-          color: "#04CCCC",
-          fontWeight: "bolder",
-          textAlign: "center",
-        }}
-      >
+      <p className={`${feedStyles.feed_loading}`}>
         Загрузка заказов
       </p>
     );
@@ -82,7 +76,6 @@ function ProfileOrders() {
             <li
               key={order._id}
               onClick={() => handleOrderClick(order)}
-              style={{ cursor: "pointer" }}
             >
               <div className={feedStyles.feed__list_inner_wrapper}>
                 <p

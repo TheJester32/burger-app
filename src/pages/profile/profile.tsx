@@ -120,21 +120,13 @@ function Profile() {
         </ul>
         {location.pathname === "/profile/orders" ? (
           <p
-            className="text text_type_main-default text_color_inactive p-2"
-            style={{
-              width: 350,
-              marginTop: "2rem",
-            }}
+          className={`text text_type_main-default text_color_inactive p-2 ${profileStyles.profile_info_text}`}
           >
             В этом разделе вы можете просмотреть свою историю заказов
           </p>
         ) : (
           <p
-            className="text text_type_main-default text_color_inactive p-2"
-            style={{
-              width: 350,
-              marginTop: "2rem",
-            }}
+            className={`text text_type_main-default text_color_inactive p-2 ${profileStyles.profile_info_text}`}
           >
             В этом разделе вы можете изменить свои персональные данные
           </p>
@@ -189,7 +181,6 @@ function Profile() {
                           ? "text_color_success"
                           : "text_color_error"
                       }`}
-                      style={{ marginBottom: "1rem" }}
                     >
                       {message}
                     </p>

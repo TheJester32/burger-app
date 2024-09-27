@@ -40,7 +40,7 @@ function LoginPage() {
           onChange={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
         />
         {error && <p className={`${formStyles.errorText} text text_type_main-small`}>{error}</p>}
-        <Button htmlType="submit" type="primary" size="medium" style={{ marginBottom: '2rem' }} disabled={isLoading}>
+        <Button htmlType="submit" type="primary" size="medium" disabled={isLoading}>
           {isLoading ? 'Загрузка...' : 'Войти'}
         </Button>
         <p className={`text text_type_main-small text_color_inactive ${formStyles.loginText}`}>

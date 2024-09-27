@@ -2,33 +2,39 @@ import React, { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../services/store/hooks";
 import { useParams } from "react-router-dom";
 import { ProfileOrderDetails } from "../../components/modals/profileOrderModal/profileOrderDetails";
+import feedStyles from "../../components/feed/feed.module.css";
 
 function ProfileOrderPage() {
   const dispatch = useAppDispatch();
   const { number } = useParams();
   const { orders, loading } = useAppSelector((state) => state.profileOrders);
 
-  const ingredientData = useAppSelector((state) => state.ingredients.allIngredients);
+  const ingredientData = useAppSelector(
+    (state) => state.ingredients.allIngredients
+  );
 
   useEffect(() => {
     const accessToken = localStorage.getItem("accessToken")?.split(" ")[1];
 
     dispatch({
-      type: 'socket/connect',
+      type: "socket/connect",
       payload: {
-        url: 'wss://norma.nomoreparties.space/orders',
+        url: "wss://norma.nomoreparties.space/orders",
         token: accessToken,
         actions: {
-          onOpen: (): any => ({ type: 'feedOrders/wsOpen' }),
-          onClose: (): any => ({ type: 'feedOrders/wsClose' }),
-          onMessage: (data: any): any => ({ type: 'feedOrders/wsMessage', payload: data }),
+          onOpen: (): any => ({ type: "feedOrders/wsOpen" }),
+          onClose: (): any => ({ type: "feedOrders/wsClose" }),
+          onMessage: (data: any): any => ({
+            type: "feedOrders/wsMessage",
+            payload: data,
+          }),
         },
       },
     });
-    
+
     return () => {
       dispatch({
-        type: 'socket/disconnect',
+        type: "socket/disconnect",
       });
     };
   }, [dispatch]);
@@ -44,15 +50,8 @@ function ProfileOrderPage() {
   }
 
   return (
-    <div style={{ display: "flex", justifyContent: "center" }}>
-      <div
-        style={{
-          display: "flex",
-          marginTop: "3rem",
-          flexDirection: "column",
-          maxWidth: "900px",
-        }}
-      >
+    <div className={feedStyles.order_container}>
+      <div className={feedStyles.order_container_inner}>
         <ProfileOrderDetails order={order} ingredientData={ingredientData} />
       </div>
     </div>

@@ -36,14 +36,12 @@ function FeedOrderDetails({ order, ingredientData }: OrderProps) {
     <>
       <p
         className={`text text_type_digits-default ${orderDetailsStyles.orderDetails_number}`}
-        style={{ marginTop: "1rem" }}
       >
         #{order.number}
       </p>
       <div className={`${orderDetailsStyles.orderDetails_inner_wrapper}`}>
         <p
           className={`text text_type_main-medium ${orderDetailsStyles.orderDetails_name}`}
-          style={{ width: "100%", maxWidth: "600px" }}
         >
           {order.name}
         </p>
@@ -81,8 +79,7 @@ function FeedOrderDetails({ order, ingredientData }: OrderProps) {
                   <img src={ingredient.image} alt="Ингредиент" />
                 </div>
                 <h4
-                  className="text text_type_main-medium"
-                  style={{ width: "100%", maxWidth: "500px" }}
+                  className={`text text_type_main-medium ${orderDetailsStyles.orderDetails_img_name}`}
                 >
                   {ingredient.name}
                 </h4>
@@ -104,7 +101,6 @@ function FeedOrderDetails({ order, ingredientData }: OrderProps) {
           <div className={`${orderDetailsStyles.orderDetails_price_wrapper}`}>
             <p
               className="text text_type_digits-default"
-              style={{ marginRight: "1rem" }}
             >
               {calculateTotalPrice()}
             </p>

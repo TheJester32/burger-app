@@ -16,6 +16,10 @@
     align-items: center;
 }
 
+.orderDetails_price_wrapper p {
+    margin-right: 1rem;
+}
+
 .orderDetails_list {
     padding-left: 0;
     height: calc(70vh - 20rem);
@@ -62,13 +66,27 @@
     padding: 12px 0;
 }
 
-.orderDetails_count_wrapper{
+.orderDetails_count_wrapper {
     display: flex;
     justify-content: flex-end;
 }
 
-.orderDetails_inner_wrapper svg{
+.orderDetails_inner_wrapper svg {
     min-width: 30px;
     max-width: 30px;
     margin-left: 1rem;
+}
+
+.orderDetails_number {
+    margin-top: 1rem;
+}
+
+.orderDetails_name {
+    width: 100%;
+    max-width: 600px;
+}
+
+.orderDetails_img_name {
+    width: 100%;
+    max-width: 500px;
 }

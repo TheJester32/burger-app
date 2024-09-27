@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
 import { useAppSelector } from "../../services/store/hooks";
 import IngredientDetails from '../../components/modals/ingredientModal/ingredientDetails';
+import burgerIngredientsStyles from '../../components/burgerIngredients/burgerIngredients.module.css';
 
 function IngredientPage() {
   const { id } = useParams();
@@ -29,7 +30,7 @@ function IngredientPage() {
   }
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', textAlign: 'center', marginTop: '6rem' }}>
+    <div className={burgerIngredientsStyles.single_ingredient_page}>
       <IngredientDetails ingredient={ingredient} />
     </div>
   );
