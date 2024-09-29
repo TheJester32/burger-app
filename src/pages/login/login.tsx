@@ -1,7 +1,6 @@
 import React, { useState, ChangeEvent, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useAppDispatch, useAppSelector } from "../../services/store/hooks";
 import { loginUser, resetError } from '../../services/reducers/userSlice';
-import { RootState } from '../../services/store/store';
 import formStyles from '../form.module.css';
 import { Button, Input, PasswordInput } from '@ya.praktikum/react-developer-burger-ui-components';
 
@@ -9,9 +8,9 @@ function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
-  const { isLoading, error } = useSelector((state: RootState) => state.user);
+  const { isLoading, error } = useAppSelector((state) => state.user);
 
   useEffect(() => {
     dispatch(resetError());
@@ -41,7 +40,7 @@ function LoginPage() {
           onChange={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
         />
         {error && <p className={`${formStyles.errorText} text text_type_main-small`}>{error}</p>}
-        <Button htmlType="submit" type="primary" size="medium" style={{ marginBottom: '2rem' }} disabled={isLoading}>
+        <Button htmlType="submit" type="primary" size="medium" disabled={isLoading}>
           {isLoading ? 'Загрузка...' : 'Войти'}
         </Button>
         <p className={`text text_type_main-small text_color_inactive ${formStyles.loginText}`}>

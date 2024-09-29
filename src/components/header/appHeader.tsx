@@ -37,9 +37,9 @@ function Header({ isAuthentficated }: HeaderProps) {
                         </NavLink>
                     </div>
                     <div className={`p-2 ${headerStyles.header__pair_elements}`}>
-                        <ListIcon type={location.pathname === '/orders' ? 'primary' : 'secondary'} />
+                        <ListIcon type={location.pathname === '/feed' ? 'primary' : 'secondary'} />
                         <NavLink
-                            to="/orders"
+                            to="/feed"
                             className={({ isActive }) =>
                                 `text text_type_main-default header__icons_text ${isActive ? headerStyles.header__icons_text_active : headerStyles.header__icons_text}`
                             }
@@ -49,7 +49,9 @@ function Header({ isAuthentficated }: HeaderProps) {
                     </div>
                 </div>
                 <div className={headerStyles.header__logo_wrapper}>
+                    <a href='/'>
                     <Logo />
+                    </a>
                 </div>
                 <div className={`p-2 ${headerStyles.header__pair_elements}`} onClick={handleProfileClick}>
                     <ProfileIcon type={location.pathname.startsWith('/profile') ? 'primary' : 'secondary'} />

@@ -3,6 +3,7 @@ import { ingredientType } from '../../utils/tsTypes';
 import { BASE_URL, checkResponse } from '../../utils/api';
 
 interface IngredientsState {
+  items: any;
   allIngredients: ingredientType[];
   buns: ingredientType[];
   constructorIngredients: ingredientType[];
@@ -22,6 +23,7 @@ const initialState: IngredientsState = {
   orderNumber: null,
   loading: false,
   error: null,
+  items: []
 };
 
 export const fetchIngredients = createAsyncThunk('ingredients/fetchIngredients', async () => {
@@ -34,10 +36,17 @@ export const createOrder = createAsyncThunk<number, ingredientType[]>(
   'ingredients/createOrder',
   async (ingredients, thunkAPI) => {
     try {
+      const accessToken = localStorage.getItem('accessToken');
+
+      if (!accessToken) {
+        return thunkAPI.rejectWithValue('Токен не найден');
+      }
+
       const response = await fetch(`${BASE_URL}/orders`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `${accessToken}`,
         },
         body: JSON.stringify({ ingredients }),
       });
@@ -52,6 +61,7 @@ export const createOrder = createAsyncThunk<number, ingredientType[]>(
     }
   }
 );
+
 
 const ingredientsSlice = createSlice({
   name: 'ingredients',

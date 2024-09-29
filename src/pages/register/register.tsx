@@ -1,7 +1,6 @@
 import React, { useEffect, useState, ChangeEvent } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useAppDispatch, useAppSelector } from "../../services/store/hooks";
 import { registerUser, resetError } from '../../services/reducers/userSlice';
-import { RootState } from '../../services/store/store';
 import formStyles from '../form.module.css';
 import { Button, Input, PasswordInput } from '@ya.praktikum/react-developer-burger-ui-components';
 
@@ -10,8 +9,8 @@ function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const dispatch = useDispatch();
-  const { isLoading, error } = useSelector((state: RootState) => state.user);
+  const dispatch = useAppDispatch();
+  const { isLoading, error } = useAppSelector((state) => state.user);
 
   useEffect(() => {
     dispatch(resetError());
@@ -23,7 +22,7 @@ function Register() {
   };
 
   return (
-    <div className={formStyles.wrapper} style={{marginTop: '3rem'}}>
+    <div className={formStyles.wrapper}>
       <form className={formStyles.form} onSubmit={handleSubmit}>
         <h1 className={`${formStyles.heading} text text_type_main-medium`}>Регистрация</h1>
         <Input
@@ -47,7 +46,7 @@ function Register() {
           onChange={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
         />
         {error && <p className={`${formStyles.errorText} text text_type_main-small`}>{error}</p>}
-        <Button htmlType="submit" type="primary" size="medium" style={{ marginBottom: '2rem' }} disabled={isLoading}>
+        <Button htmlType="submit" type="primary" size="medium" disabled={isLoading}>
           {isLoading ? 'Загрузка...' : 'Зарегистрироваться'}
         </Button>
         <p className={`p-4 text text_type_main-small text_color_inactive ${formStyles.loginText}`}>

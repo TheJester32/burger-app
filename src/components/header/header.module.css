@@ -1,7 +1,9 @@
 .header {
     display: flex;
     justify-content: center;
-    margin-top: 40px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    background-color: rgba(28, 28, 33, 1);
 }
 
 @media (min-width: 1250px) {

@@ -1,6 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 import rootReducer from './rootReducer';
 import { loadState, saveState } from '../../utils/localStorage';
+import socketMiddleware from '../middlewares/wsMiddleware';
 
 const preloadedState = loadState();
 
@@ -9,7 +10,7 @@ const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: false,
-    }),
+    }).concat(socketMiddleware),
   preloadedState,
   devTools: process.env.NODE_ENV !== 'production',
 });

@@ -2,8 +2,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import { useDrag, DragSourceMonitor } from 'react-dnd';
 import { CurrencyIcon, Counter } from '@ya.praktikum/react-developer-burger-ui-components';
 import burgerIngredientsStyles from './burgerIngredients.module.css';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../services/store/store';
+import { useAppSelector } from '../../services/store/hooks';
 import { ingredientType } from '../../utils/tsTypes';
 
 interface BurgerIngredientsProps {
@@ -17,8 +16,8 @@ interface IngredientProps {
 }
 
 function BurgerIngredients({ data, handleIngredientDetailsOpen }: BurgerIngredientsProps) {
-  const constructorIngredients = useSelector((state: RootState) => state.ingredients.constructorIngredients);
-  const buns = useSelector((state: RootState) => state.ingredients.buns);
+  const constructorIngredients = useAppSelector((state) => state.ingredients.constructorIngredients);
+  const buns = useAppSelector((state) => state.ingredients.buns);
 
   const [activeTab, setActiveTab] = useState<'buns' | 'sauces' | 'mains'>('buns');
 
