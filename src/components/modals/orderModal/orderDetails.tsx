@@ -10,7 +10,7 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({ orderNumber }) => {
   return (
     <div className={orderDetailsStyles.ingredients__modal_wrapper}>
       <div className={orderDetailsStyles.ingredients__modal_inner}>
-        <h3 className="text text_type_digits-large p-10">{orderNumber}</h3>
+        <h3 className="text text_type_digits-large p-10" data-cy="order-number">{orderNumber}</h3>
         <p className='text text_type_main-medium p-4'>идентификатор заказа</p>
         <img
           className={orderDetailsStyles.ingredients__modal_inner_done}
