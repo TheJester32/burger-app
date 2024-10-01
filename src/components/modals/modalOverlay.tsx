@@ -6,7 +6,7 @@ interface ModalOverlayProps {
 }
 
 function ModalOverlay({ handleClose }: ModalOverlayProps) {
-  return <div className={modalStyles.overlay} onClick={handleClose} />;
+  return <div className={modalStyles.overlay} onClick={handleClose} data-cy="modal-overlay"/>;
 }
 
 export default ModalOverlay;

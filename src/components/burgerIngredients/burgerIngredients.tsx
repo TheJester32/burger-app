@@ -127,29 +127,26 @@ function BurgerIngredients({
       <h1 className="text text_type_main-large">Соберите бургер</h1>
       <div className={burgerIngredientsStyles.constructor__options}>
         <h3
-          className={`text text_type_main-default p-4 ${
-            activeTab === "buns"
+          className={`text text_type_main-default p-4 ${activeTab === "buns"
               ? burgerIngredientsStyles.focused_option
               : burgerIngredientsStyles.unfocused_option
-          }`}
+            }`}
         >
           Булки
         </h3>
         <h3
-          className={`text text_type_main-default p-4 ${
-            activeTab === "sauces"
+          className={`text text_type_main-default p-4 ${activeTab === "sauces"
               ? burgerIngredientsStyles.focused_option
               : burgerIngredientsStyles.unfocused_option
-          }`}
+            }`}
         >
           Соусы
         </h3>
         <h3
-          className={`text text_type_main-default p-4 ${
-            activeTab === "mains"
+          className={`text text_type_main-default p-4 ${activeTab === "mains"
               ? burgerIngredientsStyles.focused_option
               : burgerIngredientsStyles.unfocused_option
-          }`}
+            }`}
         >
           Начинки
         </h3>
