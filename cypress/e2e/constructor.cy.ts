@@ -1,8 +1,9 @@
 import "@4tw/cypress-drag-drop";
+import { TEST_URL } from '../constants';
 
 describe("constructor", () => {
   beforeEach(() => {
-    cy.visit("http://localhost:3000");
+    cy.visit(TEST_URL);
     cy.viewport(1920, 1080);
     cy.intercept("GET", "api/ingredients", { fixture: "ingredients.json" }).as(
       "getIngredients"

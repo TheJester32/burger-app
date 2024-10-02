@@ -6,13 +6,8 @@ import reducer, {
     updateOrders,
   } from './profileOrdersSlice';
   
-  const initialState = {
-    orders: [],
-    loading: false,
-    error: null,
-    ingredientData: {},
-  };
-  
+  import { initialState } from './profileOrdersSlice'
+
   describe('profileOrdersSlice reducer', () => {
     it('should return the initial state', () => {
       expect(reducer(undefined, {})).toEqual(initialState);

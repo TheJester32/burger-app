@@ -136,4 +136,6 @@ export const {
   clearConstructor
 } = ingredientsSlice.actions;
 
+export { initialState };
+
 export default ingredientsSlice.reducer;

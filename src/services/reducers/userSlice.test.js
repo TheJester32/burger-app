@@ -7,19 +7,7 @@ import {
   updateUserProfile
 } from './userSlice';
 
-const initialState = {
-  user: {
-    email: null,
-    name: null,
-    success: false,
-  },
-  accessToken: null,
-  refreshToken: null,
-  isLoading: false,
-  isAuthentficated: false,
-  error: null,
-  updateStatus: 'idle',
-};
+import { initialState } from './userSlice'
 
 describe('userSlice reducer', () => {
   it('should return the initial state', () => {

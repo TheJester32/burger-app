@@ -7,19 +7,10 @@ import ingredientsReducer, {
     resetOrderNumber, 
     clearConstructor 
   } from './ingredientsSlice';
+
+  import { initialState } from './ingredientsSlice'
   
   describe('ingredientsSlice reducer', () => {
-    const initialState = {
-      allIngredients: [],
-      buns: [],
-      constructorIngredients: [],
-      viewedIngredient: null,
-      createdOrder: null,
-      orderNumber: null,
-      loading: false,
-      error: null,
-      items: []
-    };
   
     it('should return the initial state', () => {
       expect(ingredientsReducer(undefined, { type: undefined })).toEqual(initialState);

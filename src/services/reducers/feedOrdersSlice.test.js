@@ -4,16 +4,8 @@ import reducer, {
     setError,
     wsMessageAction,
   } from './feedOrdersSlice';
-  
-  const initialState = {
-    orders: [],
-    total: 0,
-    totalToday: 0,
-    loading: false,
-    error: null,
-    ingredients: {},
-    ingredientsLoading: false,
-  };
+
+  import { initialState } from './feedOrdersSlice';
   
   describe('feedOrdersSlice reducer', () => {
     it('should return the initial state', () => {

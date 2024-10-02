@@ -75,4 +75,7 @@ export const {
   setLoading,
   setError,
 } = ordersSlice.actions;
+
+export { initialState };
+
 export default ordersSlice.reducer;
