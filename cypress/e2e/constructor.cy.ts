@@ -2,6 +2,9 @@ import "@4tw/cypress-drag-drop";
 import { TEST_URL } from '../constants';
 
 describe("constructor", () => {
+ const modalOverlay = 'div[data-cy="modal-overlay"]';
+ const ingredients = 'li[data-cy="constructor-ingredient"]';
+
   beforeEach(() => {
     cy.visit(TEST_URL);
     cy.viewport(1920, 1080);
@@ -21,17 +24,17 @@ describe("constructor", () => {
   });
 
   it("should handle modal interactions correctly", () => {
-    cy.get('li[data-cy="constructor-ingredient"]').eq(0).click();
-    cy.get('div[data-cy="modal-overlay"]').click({ force: true });
-    cy.get('div[data-cy="modal-overlay"]').should('not.exist');
+    cy.get(ingredients).eq(0).click();
+    cy.get(modalOverlay).click({ force: true });
+    cy.get(modalOverlay).should('not.exist');
 
-    cy.get('li[data-cy="constructor-ingredient"]').eq(1).click();
+    cy.get(ingredients).eq(1).click();
     cy.get('body').type('{esc}');
-    cy.get('div[data-cy="modal-overlay"]').should('not.exist');
+    cy.get(modalOverlay).should('not.exist');
 
-    cy.get('li[data-cy="constructor-ingredient"]').eq(2).click();
+    cy.get(ingredients).eq(2).click();
     cy.get('div[data-cy="modal-close-btn"]').click({ force: true });
-    cy.get('div[data-cy="modal-overlay"]').should('not.exist');
+    cy.get(modalOverlay).should('not.exist');
   });
 
   it("should add ingredients to the constructor and login with creating a new order", () => {
@@ -63,8 +66,8 @@ describe("constructor", () => {
 
     cy.get('h3[data-cy="order-number"]').contains("666");
 
-    cy.get('div[data-cy="modal-overlay"]').click({ force: true });
-    cy.get('div[data-cy="modal-overlay"]').should('not.exist');
+    cy.get(modalOverlay).click({ force: true });
+    cy.get(modalOverlay).should('not.exist');
   });
 
 });
