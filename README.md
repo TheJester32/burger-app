@@ -1,1 +1,1 @@
-ya practicum step 2
+https://thejester32.github.io/burger-app-deploy/
