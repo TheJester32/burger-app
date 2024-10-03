@@ -258,5 +258,5 @@ const userSlice = createSlice({
 });
 
 export const { resetError } = userSlice.actions;
-
+export { initialState };
 export default userSlice.reducer;

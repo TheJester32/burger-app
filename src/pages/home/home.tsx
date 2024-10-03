@@ -1,11 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../services/store/hooks";
-import { BurgerIngredients } from '../../components/burgerIngredients/burgerIngredients';
-import { BurgerConstructor } from '../../components/burgerConstructor/burgerConstructor';
-import Modal from '../../components/modals/modal';
-import appStyles from '../../components/app/app.module.css';
-import IngredientDetails from '../../components/modals/ingredientModal/ingredientDetails';
-import OrderDetails from '../../components/modals/orderModal/orderDetails';
+import { BurgerIngredients } from "../../components/burgerIngredients/burgerIngredients";
+import { BurgerConstructor } from "../../components/burgerConstructor/burgerConstructor";
+import Modal from "../../components/modals/modal";
+import appStyles from "../../components/app/app.module.css";
+import IngredientDetails from "../../components/modals/ingredientModal/ingredientDetails";
+import OrderDetails from "../../components/modals/orderModal/orderDetails";
 import {
   setViewedIngredient,
   createOrder,
@@ -14,11 +14,11 @@ import {
   removeConstructorIngredient,
   reorderConstructorIngredients,
   resetOrderNumber,
-  clearConstructor
-} from '../../services/reducers/ingredientsSlice';
-import { ingredientType } from '../../utils/tsTypes';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { v4 as uuidv4 } from 'uuid';
+  clearConstructor,
+} from "../../services/reducers/ingredientsSlice";
+import { ingredientType } from "../../utils/tsTypes";
+import { useNavigate, useLocation } from "react-router-dom";
+import { v4 as uuidv4 } from "uuid";
 
 export const HomePage = () => {
   const dispatch = useAppDispatch();
@@ -29,7 +29,7 @@ export const HomePage = () => {
     viewedIngredient,
     orderNumber,
     loading,
-    error
+    error,
   } = useAppSelector((state) => state.ingredients);
 
   const navigate = useNavigate();
@@ -38,9 +38,9 @@ export const HomePage = () => {
   const handleIngredientDetailsOpen = (ingredient: ingredientType | null) => {
     if (ingredient) {
       const ingredientPath = `/ingredients/${ingredient._id}`;
-  
-      localStorage.setItem('viewedIngredient', JSON.stringify(ingredient));
-  
+
+      localStorage.setItem("viewedIngredient", JSON.stringify(ingredient));
+
       if (location.pathname === ingredientPath) {
         dispatch(setViewedIngredient(ingredient));
       } else {
@@ -48,13 +48,13 @@ export const HomePage = () => {
         navigate(ingredientPath, { state: { modal: true } });
       }
     } else {
-      console.error('Ingredient is undefined');
+      console.error("Ingredient is undefined");
     }
   };
 
   useEffect(() => {
-    const savedIngredient = localStorage.getItem('viewedIngredient');
-  
+    const savedIngredient = localStorage.getItem("viewedIngredient");
+
     if (savedIngredient) {
       const ingredient = JSON.parse(savedIngredient) as ingredientType;
       dispatch(setViewedIngredient(ingredient));
@@ -64,8 +64,8 @@ export const HomePage = () => {
 
   const handleIngredientDetailsClose = () => {
     dispatch(setViewedIngredient(null));
-    localStorage.removeItem('viewedIngredient');
-    navigate('/');
+    localStorage.removeItem("viewedIngredient");
+    navigate("/");
   };
 
   const handleOrderDetailsOpen = () => {
@@ -81,10 +81,10 @@ export const HomePage = () => {
   };
 
   const handleIngredientDrop = (id: string) => {
-    const ingredient = allIngredients.find(ing => ing._id === id);
+    const ingredient = allIngredients.find((ing) => ing._id === id);
     if (ingredient) {
       const ingredientWithUUID = { ...ingredient, uuid: uuidv4() };
-      if (ingredient.type === 'bun') {
+      if (ingredient.type === "bun") {
         dispatch(setBun(ingredientWithUUID));
       } else {
         dispatch(addConstructorIngredient(ingredientWithUUID));
@@ -104,7 +104,11 @@ export const HomePage = () => {
 
   return (
     <>
-      {loading && <div>Загрузка...</div>}
+      {loading && (
+        <div className={appStyles.loading_window}>
+          <div className={appStyles.spinner}></div>
+        </div>
+      )}
       {error && <div>Ошибка: {error}</div>}
       {allIngredients.length > 0 && (
         <>
@@ -123,12 +127,18 @@ export const HomePage = () => {
                 isAuthentficated={isAuthentficated}
               />
               {viewedIngredient && (
-                <Modal isOpen={Boolean(viewedIngredient)} handleClose={handleIngredientDetailsClose}>
+                <Modal
+                  isOpen={Boolean(viewedIngredient)}
+                  handleClose={handleIngredientDetailsClose}
+                >
                   <IngredientDetails ingredient={viewedIngredient} />
                 </Modal>
               )}
               {orderNumber && (
-                <Modal isOpen={Boolean(orderNumber)} handleClose={() => dispatch(resetOrderNumber())}>
+                <Modal
+                  isOpen={Boolean(orderNumber)}
+                  handleClose={() => dispatch(resetOrderNumber())}
+                >
                   <OrderDetails orderNumber={orderNumber} />
                 </Modal>
               )}

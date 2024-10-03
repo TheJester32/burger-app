@@ -47,4 +47,5 @@ const profileOrdersSlice = createSlice({
 });
 
 export const { setOrders, setLoading, setError, clearOrders, updateOrders } = profileOrdersSlice.actions;
+export { initialState };
 export default profileOrdersSlice.reducer;

@@ -29,7 +29,9 @@ function Modal({ children, isOpen, handleClose }: ModalProps) {
     <div className={modalStyles.modal}>
       <ModalOverlay handleClose={handleClose} />
       <div className={modalStyles.modal_content}>
-        <CloseIcon type="primary" onClick={handleClose} />
+        <div data-cy="modal-close-btn" onClick={handleClose}>
+        <CloseIcon type="primary"/>
+        </div>
         {children}
       </div>
     </div>,
